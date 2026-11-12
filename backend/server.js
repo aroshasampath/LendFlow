@@ -9,6 +9,7 @@ import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
 import authRoutes from './routes/auth.routes.js';
 import userRoutes from './routes/user.routes.js';
 import loanRoutes from './routes/loan.routes.js';
+import repaymentRoutes from './routes/repayment.routes.js';
 
 // Load environment configuration
 dotenv.config();
@@ -64,6 +65,7 @@ app.get('/api/health', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/loans', loanRoutes);
+app.use('/api/repayments', repaymentRoutes);
 
 // Root welcome status
 app.get('/', (req, res) => {

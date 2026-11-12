@@ -19,6 +19,7 @@ import { PublicProfilePage } from './pages/PublicProfilePage';
 import { MyLoansPage } from './pages/MyLoansPage';
 import { CreateLoanPage } from './pages/CreateLoanPage';
 import { LoanDetailsPage } from './pages/LoanDetailsPage';
+import { RepaymentsPage } from './pages/RepaymentsPage';
 
 export default function App() {
   return (
@@ -90,6 +91,14 @@ export default function App() {
               element={
                 <ProtectedRoute>
                   <LoanDetailsPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/repayments"
+              element={
+                <ProtectedRoute>
+                  <RepaymentsPage />
                 </ProtectedRoute>
               }
             />
