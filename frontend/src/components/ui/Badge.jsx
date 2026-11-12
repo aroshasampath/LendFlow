@@ -23,3 +23,4 @@ export const Badge = ({ children, status = 'default', className = '' }) => {
     </span>
   );
 };
+
