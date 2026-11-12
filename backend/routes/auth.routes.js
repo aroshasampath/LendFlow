@@ -37,3 +37,4 @@ router.post('/mfa/enable', requireAuth, verifyAndEnableMfa);
 router.post('/mfa/disable', requireAuth, disableMfa);
 
 export default router;
+

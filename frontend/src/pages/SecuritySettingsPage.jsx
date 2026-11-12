@@ -425,3 +425,4 @@ export const SecuritySettingsPage = () => {
     </div>
   );
 };
+

@@ -79,3 +79,4 @@ export const validatePasswordChange = ({ currentPassword, newPassword, confirmNe
 
   return { isValid: true };
 };
+

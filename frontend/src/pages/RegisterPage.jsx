@@ -165,3 +165,4 @@ export const RegisterPage = () => {
     </div>
   );
 };
+
