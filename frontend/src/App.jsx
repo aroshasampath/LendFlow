@@ -20,13 +20,16 @@ import { MyLoansPage } from './pages/MyLoansPage';
 import { CreateLoanPage } from './pages/CreateLoanPage';
 import { LoanDetailsPage } from './pages/LoanDetailsPage';
 import { RepaymentsPage } from './pages/RepaymentsPage';
+import { NotificationsPage } from './pages/NotificationsPage';
+import { NotificationProvider } from './context/NotificationContext';
 
 export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <MainLayout>
-          <Routes>
+        <NotificationProvider>
+          <MainLayout>
+            <Routes>
             {/* Public Pages */}
             <Route path="/" element={<HomePage />} />
             <Route path="/register" element={<RegisterPage />} />
@@ -103,6 +106,14 @@ export default function App() {
               }
             />
             <Route
+              path="/notifications"
+              element={
+                <ProtectedRoute>
+                  <NotificationsPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
               path="/security-settings"
               element={
                 <ProtectedRoute>
@@ -112,7 +123,8 @@ export default function App() {
             />
           </Routes>
         </MainLayout>
-      </AuthProvider>
-    </BrowserRouter>
+      </NotificationProvider>
+    </AuthProvider>
+  </BrowserRouter>
   );
 }

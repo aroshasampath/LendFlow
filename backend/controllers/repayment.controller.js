@@ -3,6 +3,7 @@ import { Repayment } from '../models/Repayment.model.js';
 import { Loan } from '../models/Loan.model.js';
 import { toMinorUnits, toMajorUnits, formatCurrency } from '../utils/money.js';
 import { validateRepaymentSubmission } from '../validators/repayment.validator.js';
+import { sendNotification } from '../services/notification.service.js';
 
 /**
  * 1. Submit a Repayment (Borrower Feature)
@@ -19,7 +20,6 @@ export const submitRepayment = async (req, res, next) => {
       idempotencyKey,
     } = req.body;
 
-    // Validation
     const validation = validateRepaymentSubmission({
       loanId,
       amount,
@@ -48,7 +48,6 @@ export const submitRepayment = async (req, res, next) => {
       });
     }
 
-    // BOLA Check: Only the Borrower can submit repayments
     if (!loan.borrower.equals(req.user._id)) {
       return res.status(403).json({
         success: false,
@@ -56,7 +55,6 @@ export const submitRepayment = async (req, res, next) => {
       });
     }
 
-    // State Check: Only active or overdue loans accept repayments
     if (!['active', 'overdue'].includes(loan.status)) {
       return res.status(400).json({
         success: false,
@@ -64,7 +62,6 @@ export const submitRepayment = async (req, res, next) => {
       });
     }
 
-    // Idempotency Check: Prevent duplicate payment processing
     const existingPayment = await Repayment.findOne({ idempotencyKey: idempotencyKey.trim() });
     if (existingPayment) {
       return res.status(409).json({
@@ -73,10 +70,8 @@ export const submitRepayment = async (req, res, next) => {
       });
     }
 
-    // Financial Calculation in Integer Minor Units (Cents)
     const amountInMinorUnits = toMinorUnits(amount);
 
-    // Guard: Repayment cannot exceed outstanding balance
     if (amountInMinorUnits > loan.remainingBalance) {
       return res.status(400).json({
         success: false,
@@ -99,7 +94,6 @@ export const submitRepayment = async (req, res, next) => {
 
     await repayment.save();
 
-    // Record submission in loan audit timeline (Note: balance does NOT reduce until confirmed)
     loan.timeline.push({
       action: 'repayment_submitted',
       performedBy: req.user._id,
@@ -107,6 +101,17 @@ export const submitRepayment = async (req, res, next) => {
       note: `Repayment of ${formatCurrency(amountInMinorUnits, loan.currency)} submitted by borrower. Awaiting lender confirmation.`,
     });
     await loan.save();
+
+    // Notify Lender of incoming repayment
+    await sendNotification({
+      recipient: loan.lender,
+      sender: req.user._id,
+      type: 'repayment_submitted',
+      title: 'New Repayment Received to Verify',
+      message: `${req.user.fullName} submitted a payment of ${formatCurrency(amountInMinorUnits, loan.currency)} for "${loan.description}". Please review and confirm.`,
+      link: `/repayments?loanId=${loan._id}`,
+      metadata: { loanId: loan._id, repaymentId: repayment._id, amount: amountInMinorUnits },
+    });
 
     return res.status(201).json({
       success: true,
@@ -149,7 +154,6 @@ export const confirmRepayment = async (req, res, next) => {
       });
     }
 
-    // BOLA Check: Only the Lender can confirm incoming repayments
     if (!repayment.lender.equals(req.user._id)) {
       return res.status(403).json({
         success: false,
@@ -157,7 +161,6 @@ export const confirmRepayment = async (req, res, next) => {
       });
     }
 
-    // State Check: Can only confirm pending payments
     if (repayment.status !== 'pending') {
       return res.status(400).json({
         success: false,
@@ -173,7 +176,6 @@ export const confirmRepayment = async (req, res, next) => {
       });
     }
 
-    // Deduct from remaining balance atomically
     const previousBalance = loan.remainingBalance;
     const deduction = Math.min(repayment.amount, loan.remainingBalance);
     const newBalance = previousBalance - deduction;
@@ -181,7 +183,6 @@ export const confirmRepayment = async (req, res, next) => {
     loan.remainingBalance = newBalance;
     loan.totalRepaid += deduction;
 
-    // Check if loan is now fully completed
     let isNowCompleted = false;
     if (newBalance === 0) {
       loan.status = 'completed';
@@ -194,7 +195,6 @@ export const confirmRepayment = async (req, res, next) => {
       });
     }
 
-    // Add repayment confirmation to timeline
     loan.timeline.push({
       action: 'repayment_confirmed',
       performedBy: req.user._id,
@@ -204,13 +204,23 @@ export const confirmRepayment = async (req, res, next) => {
 
     await loan.save();
 
-    // Update repayment record
     repayment.status = 'confirmed';
     repayment.confirmedAt = new Date();
     repayment.confirmedBy = req.user._id;
     repayment.previousBalance = previousBalance;
     repayment.newBalance = newBalance;
     await repayment.save();
+
+    // Notify Borrower of confirmation
+    await sendNotification({
+      recipient: repayment.borrower,
+      sender: req.user._id,
+      type: 'repayment_confirmed',
+      title: isNowCompleted ? 'Loan Fully Completed!' : 'Repayment Confirmed',
+      message: `${req.user.fullName} confirmed your repayment of ${formatCurrency(repayment.amount, loan.currency)}. Outstanding balance: ${formatCurrency(newBalance, loan.currency)}.`,
+      link: `/loans/${loan._id}`,
+      metadata: { loanId: loan._id, repaymentId: repayment._id, newBalance },
+    });
 
     return res.status(200).json({
       success: true,
@@ -256,7 +266,6 @@ export const rejectRepayment = async (req, res, next) => {
       });
     }
 
-    // BOLA Check: Only the Lender can reject repayments
     if (!repayment.lender.equals(req.user._id)) {
       return res.status(403).json({
         success: false,
@@ -275,7 +284,6 @@ export const rejectRepayment = async (req, res, next) => {
     repayment.rejectionReason = rejectionReason ? rejectionReason.trim() : 'Declined by lender.';
     await repayment.save();
 
-    // Record in loan timeline
     const loan = await Loan.findById(repayment.loan);
     if (loan) {
       loan.timeline.push({
@@ -285,6 +293,17 @@ export const rejectRepayment = async (req, res, next) => {
         note: `Repayment of ${formatCurrency(repayment.amount, loan.currency)} declined by lender: ${repayment.rejectionReason}`,
       });
       await loan.save();
+
+      // Notify Borrower of rejection
+      await sendNotification({
+        recipient: repayment.borrower,
+        sender: req.user._id,
+        type: 'repayment_rejected',
+        title: 'Repayment Submission Declined',
+        message: `${req.user.fullName} declined your repayment submission for "${loan.description}": ${repayment.rejectionReason}`,
+        link: `/loans/${loan._id}`,
+        metadata: { loanId: loan._id, repaymentId: repayment._id, reason: repayment.rejectionReason },
+      });
     }
 
     return res.status(200).json({
@@ -320,7 +339,6 @@ export const getLoanRepayments = async (req, res, next) => {
       });
     }
 
-    // BOLA Check: Only Lender or Borrower can access payment history
     if (!loan.lender.equals(req.user._id) && !loan.borrower.equals(req.user._id)) {
       return res.status(403).json({
         success: false,
@@ -404,4 +422,3 @@ export const getMyRepayments = async (req, res, next) => {
     next(error);
   }
 };
-

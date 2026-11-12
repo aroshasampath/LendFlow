@@ -10,6 +10,8 @@ import authRoutes from './routes/auth.routes.js';
 import userRoutes from './routes/user.routes.js';
 import loanRoutes from './routes/loan.routes.js';
 import repaymentRoutes from './routes/repayment.routes.js';
+import notificationRoutes from './routes/notification.routes.js';
+import dashboardRoutes from './routes/dashboard.routes.js';
 
 // Load environment configuration
 dotenv.config();
@@ -66,6 +68,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/loans', loanRoutes);
 app.use('/api/repayments', repaymentRoutes);
+app.use('/api/notifications', notificationRoutes);
+app.use('/api/dashboard', dashboardRoutes);
 
 // Root welcome status
 app.get('/', (req, res) => {

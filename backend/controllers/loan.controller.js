@@ -1,8 +1,9 @@
 import mongoose from 'mongoose';
 import { Loan } from '../models/Loan.model.js';
 import { User } from '../models/User.model.js';
-import { toMinorUnits, toMajorUnits } from '../utils/money.js';
+import { toMinorUnits, toMajorUnits, formatCurrency } from '../utils/money.js';
 import { validateLoanCreation } from '../validators/loan.validator.js';
+import { sendNotification } from '../services/notification.service.js';
 
 /**
  * 1. Create a New Loan Request
@@ -21,7 +22,6 @@ export const createLoan = async (req, res, next) => {
       notes,
     } = req.body;
 
-    // Input Validation
     const validation = validateLoanCreation({
       borrowerIdentifier,
       amount,
@@ -35,7 +35,6 @@ export const createLoan = async (req, res, next) => {
       return res.status(400).json({ success: false, message: validation.error });
     }
 
-    // Resolve Borrower by Username, Email, or ObjectId
     let borrowerFilter = {};
     if (mongoose.Types.ObjectId.isValid(borrowerIdentifier)) {
       borrowerFilter = { _id: borrowerIdentifier };
@@ -54,7 +53,6 @@ export const createLoan = async (req, res, next) => {
       });
     }
 
-    // Anti Self-Lending Rule
     if (borrower._id.equals(req.user._id)) {
       return res.status(400).json({
         success: false,
@@ -62,7 +60,6 @@ export const createLoan = async (req, res, next) => {
       });
     }
 
-    // Convert amount to integer minor units (prevents floating point error)
     const amountInMinorUnits = toMinorUnits(amount);
 
     const loan = new Loan({
@@ -89,6 +86,17 @@ export const createLoan = async (req, res, next) => {
     });
 
     await loan.save();
+
+    // Send Notification to Borrower
+    await sendNotification({
+      recipient: borrower._id,
+      sender: req.user._id,
+      type: 'loan_request',
+      title: 'New Loan Proposal Received',
+      message: `${req.user.fullName} proposed a loan agreement of ${formatCurrency(amountInMinorUnits, loan.currency)} for: "${loan.description}".`,
+      link: `/loans/${loan._id}`,
+      metadata: { loanId: loan._id, amount: amountInMinorUnits },
+    });
 
     const populatedLoan = await Loan.findById(loan._id)
       .populate('lender', 'fullName username avatar email')
@@ -117,7 +125,6 @@ export const getMyLoans = async (req, res, next) => {
     const limitNum = Math.min(50, Math.max(1, parseInt(limit, 10)));
     const skip = (pageNum - 1) * limitNum;
 
-    // Filter by role
     let roleFilter = {};
     if (role === 'lender') {
       roleFilter = { lender: req.user._id };
@@ -129,7 +136,6 @@ export const getMyLoans = async (req, res, next) => {
       };
     }
 
-    // Filter by status if provided
     let statusFilter = {};
     if (status && status !== 'all') {
       statusFilter = { status };
@@ -137,7 +143,7 @@ export const getMyLoans = async (req, res, next) => {
 
     const queryFilter = { ...roleFilter, ...statusFilter };
 
-    // Auto-check for overdue loans (dueDate < now and status === 'active' and remainingBalance > 0)
+    // Auto-check for overdue loans
     await Loan.updateMany(
       {
         ...roleFilter,
@@ -215,8 +221,6 @@ export const getLoanById = async (req, res, next) => {
       });
     }
 
-    // BOLA / IDOR Security Enforcement:
-    // Only the Lender or Borrower is authorized to view loan specifics
     const isLender = loan.lender._id.equals(req.user._id);
     const isBorrower = loan.borrower._id.equals(req.user._id);
 
@@ -270,7 +274,6 @@ export const respondToLoanRequest = async (req, res, next) => {
       });
     }
 
-    // BOLA Check: Only the designated Borrower can respond
     if (!loan.borrower.equals(req.user._id)) {
       return res.status(403).json({
         success: false,
@@ -278,7 +281,6 @@ export const respondToLoanRequest = async (req, res, next) => {
       });
     }
 
-    // State Machine Check: Can only act on pending requests
     if (loan.status !== 'pending') {
       return res.status(400).json({
         success: false,
@@ -296,6 +298,17 @@ export const respondToLoanRequest = async (req, res, next) => {
       });
       await loan.save();
 
+      // Notify Lender
+      await sendNotification({
+        recipient: loan.lender,
+        sender: req.user._id,
+        type: 'loan_accepted',
+        title: 'Loan Agreement Accepted',
+        message: `${req.user.fullName} accepted the loan terms for "${loan.description}". The agreement is now active.`,
+        link: `/loans/${loan._id}`,
+        metadata: { loanId: loan._id },
+      });
+
       return res.status(200).json({
         success: true,
         message: 'You have accepted the loan agreement.',
@@ -311,6 +324,17 @@ export const respondToLoanRequest = async (req, res, next) => {
         note: `Loan proposal rejected by borrower: ${loan.rejectionReason}`,
       });
       await loan.save();
+
+      // Notify Lender
+      await sendNotification({
+        recipient: loan.lender,
+        sender: req.user._id,
+        type: 'loan_rejected',
+        title: 'Loan Agreement Declined',
+        message: `${req.user.fullName} declined the loan proposal for "${loan.description}".`,
+        link: `/loans/${loan._id}`,
+        metadata: { loanId: loan._id, reason: loan.rejectionReason },
+      });
 
       return res.status(200).json({
         success: true,
@@ -347,7 +371,6 @@ export const cancelLoanRequest = async (req, res, next) => {
       });
     }
 
-    // BOLA Check: Only the Lender can cancel their pending request
     if (!loan.lender.equals(req.user._id)) {
       return res.status(403).json({
         success: false,
@@ -355,7 +378,6 @@ export const cancelLoanRequest = async (req, res, next) => {
       });
     }
 
-    // State Machine Check: Cannot cancel active or completed loans
     if (loan.status !== 'pending') {
       return res.status(400).json({
         success: false,
@@ -373,6 +395,17 @@ export const cancelLoanRequest = async (req, res, next) => {
     });
     await loan.save();
 
+    // Notify Borrower
+    await sendNotification({
+      recipient: loan.borrower,
+      sender: req.user._id,
+      type: 'loan_cancelled',
+      title: 'Loan Proposal Withdrawn',
+      message: `${req.user.fullName} has withdrawn the loan proposal for "${loan.description}".`,
+      link: `/loans/${loan._id}`,
+      metadata: { loanId: loan._id },
+    });
+
     return res.status(200).json({
       success: true,
       message: 'The loan request has been cancelled.',
@@ -382,4 +415,3 @@ export const cancelLoanRequest = async (req, res, next) => {
     next(error);
   }
 };
-

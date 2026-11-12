@@ -1,203 +1,477 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { api } from '../services/api';
+import { Button } from '../components/ui/Button';
+import { Badge } from '../components/ui/Badge';
 import { 
-  Database, 
-  Server, 
-  ShieldCheck, 
-  ArrowRight, 
-  RefreshCw, 
-  Smartphone, 
+  Coins, 
+  ArrowUpRight, 
+  ArrowDownLeft, 
+  TrendingUp, 
   CheckCircle2, 
-  AlertCircle,
-  TrendingUp,
+  AlertTriangle, 
+  Calendar, 
+  CreditCard, 
+  Plus, 
+  Search, 
+  ArrowRight,
+  ShieldCheck,
   Clock,
+  Landmark,
   Layers
 } from 'lucide-react';
-import { fetchSystemHealth } from '../services/api';
+import {
+  AreaChart,
+  Area,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Legend
+} from 'recharts';
 
 export const HomePage = () => {
-  const [healthData, setHealthData] = useState(null);
+  const { user, isAuthenticated } = useAuth();
+  const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState('');
-  const [lastRefreshed, setLastRefreshed] = useState(new Date());
 
-  const loadHealth = async () => {
+  const fetchSummary = async () => {
+    if (!isAuthenticated) return;
     setLoading(true);
     setErrorMsg('');
     try {
-      const data = await fetchSystemHealth();
-      setHealthData(data);
+      const res = await api.get('/dashboard/summary');
+      setDashboardData(res.data);
     } catch (err) {
-      setErrorMsg(err.message || 'Unable to connect to the backend server.');
+      setErrorMsg(err.message || 'Unable to retrieve dashboard analytics.');
     } finally {
       setLoading(false);
-      setLastRefreshed(new Date());
     }
   };
 
   useEffect(() => {
-    loadHealth();
-  }, []);
+    if (isAuthenticated) {
+      fetchSummary();
+    } else {
+      setLoading(false);
+    }
+  }, [isAuthenticated]);
+
+  // UN-AUTHENTICATED LANDING PAGE
+  if (!isAuthenticated) {
+    return (
+      <div className="space-y-12 py-4">
+        {/* Hero Section */}
+        <section className="bg-gradient-to-br from-brand-dark via-slate-900 to-indigo-950 text-white rounded-3xl p-8 sm:p-14 shadow-2xl relative overflow-hidden">
+          <div className="absolute -right-16 -bottom-16 w-96 h-96 bg-brand-primary/20 rounded-full blur-3xl pointer-events-none"></div>
+
+          <div className="max-w-3xl space-y-5 relative z-10">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-primary/20 text-brand-primaryLight border border-brand-primary/30 text-xs font-semibold tracking-wide uppercase">
+              <ShieldCheck className="w-3.5 h-3.5" />
+              LendFlow Fintech Platform
+            </div>
+
+            <h1 className="text-3xl sm:text-5xl font-black tracking-tight leading-tight">
+              Smarter, Safer <span className="text-brand-primaryLight">Peer-to-Peer</span> Loan Management
+            </h1>
+
+            <p className="text-slate-300 text-sm sm:text-base lg:text-lg leading-relaxed">
+              Track bilateral loans, automate repayment schedules, eliminate floating-point calculation errors, and maintain immutable financial audit trails across all your devices.
+            </p>
+
+            <div className="pt-3 flex flex-wrap gap-3.5">
+              <Link to="/register">
+                <Button variant="primary" size="lg" icon={Plus}>
+                  Get Started Free
+                </Button>
+              </Link>
+              <Link to="/login">
+                <Button variant="secondary" size="lg">
+                  Sign In
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* Core Pillars */}
+        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-2">
+            <div className="w-10 h-10 rounded-xl bg-blue-50 text-brand-primary flex items-center justify-center font-bold">
+              <Coins className="w-5 h-5" />
+            </div>
+            <h3 className="font-bold text-slate-900 text-base">Dual-Role Workflows</h3>
+            <p className="text-xs text-slate-500 leading-relaxed">
+              Act as both lender and borrower simultaneously with complete separation of authorization records.
+            </p>
+          </div>
+
+          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-2">
+            <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
+              <ShieldCheck className="w-5 h-5" />
+            </div>
+            <h3 className="font-bold text-slate-900 text-base">Minor-Unit Precision</h3>
+            <p className="text-xs text-slate-500 leading-relaxed">
+              Stores all financial values in integer cents to eliminate floating-point calculation bugs.
+            </p>
+          </div>
+
+          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-2">
+            <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold">
+              <CreditCard className="w-5 h-5" />
+            </div>
+            <h3 className="font-bold text-slate-900 text-base">Idempotent Payments</h3>
+            <p className="text-xs text-slate-500 leading-relaxed">
+              Guarantees zero duplicate repayments and requires lender verification before balance deduction.
+            </p>
+          </div>
+
+          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-2">
+            <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center font-bold">
+              <Layers className="w-5 h-5" />
+            </div>
+            <h3 className="font-bold text-slate-900 text-base">Mobile-First QA</h3>
+            <p className="text-xs text-slate-500 leading-relaxed">
+              Responsive table-to-card transformation ensuring comfortable touch interaction on every screen size.
+            </p>
+          </div>
+        </section>
+      </div>
+    );
+  }
+
+  // AUTHENTICATED DASHBOARD VIEW
+  const cards = dashboardData?.cards || {};
+  const charts = dashboardData?.charts?.trends || [];
+  const overdueLoans = dashboardData?.overdueLoans || [];
+  const upcomingLoans = dashboardData?.upcomingDueLoans || [];
+  const recentLoans = dashboardData?.recentActivity?.loans || [];
+  const recentRepayments = dashboardData?.recentActivity?.repayments || [];
 
   return (
     <div className="space-y-8">
-      {/* Hero Section */}
-      <section className="bg-gradient-to-br from-brand-dark to-slate-900 text-white rounded-2xl p-6 sm:p-10 shadow-xl shadow-brand-dark/10 relative overflow-hidden">
-        <div className="absolute -right-10 -bottom-10 w-72 h-72 bg-brand-primary/20 rounded-full blur-3xl pointer-events-none"></div>
-        
-        <div className="max-w-3xl space-y-4 relative z-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-primary/20 text-brand-primaryLight border border-brand-primary/30 text-xs font-semibold tracking-wide uppercase">
-            <Layers className="w-3.5 h-3.5" />
-            Stage 2: Project Architecture Established
-          </div>
-
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight">
-            Next-Generation Multi-User <span className="text-brand-primaryLight">Loan Management</span>
+      {/* Top Welcome & Quick Actions */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900">
+            Welcome back, {user?.fullName?.split(' ')[0]}!
           </h1>
-
-          <p className="text-slate-300 text-sm sm:text-base lg:text-lg leading-relaxed">
-            LendFlow enables peers and businesses to track bilateral lending, manage repayment schedules, enforce financial audit trails, and visualize balances across mobile, tablet, and desktop devices.
+          <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
+            Here is your bilateral financial summary and active lending portfolio.
           </p>
-
-          <div className="pt-2 flex flex-wrap gap-3">
-            <button
-              onClick={loadHealth}
-              disabled={loading}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-brand-primary text-white font-medium text-sm hover:bg-brand-primaryHover transition-all shadow-md shadow-brand-primary/25 disabled:opacity-50"
-            >
-              <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-              Verify Backend Health
-            </button>
-            <a
-              href="#architecture"
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-white font-medium text-sm transition-all border border-white/10"
-            >
-              Explore Architecture
-              <ArrowRight className="w-4 h-4" />
-            </a>
-          </div>
-        </div>
-      </section>
-
-      {/* System Health Status Card */}
-      <section className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-100">
-          <div>
-            <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-              <Server className="w-5 h-5 text-brand-primary" />
-              Live System Connectivity
-            </h2>
-            <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
-              Real-time communication between React frontend, Express API, and MongoDB Atlas.
-            </p>
-          </div>
-
-          <div className="flex items-center gap-2 text-xs text-slate-400">
-            <Clock className="w-3.5 h-3.5" />
-            <span>Updated: {lastRefreshed.toLocaleTimeString()}</span>
-          </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-6">
-          {/* Service Status */}
-          <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/80 flex items-start gap-3.5">
-            <div className={`p-2.5 rounded-xl ${healthData?.status === 'healthy' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>
-              {healthData?.status === 'healthy' ? <CheckCircle2 className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}
-            </div>
+        <div className="flex flex-wrap gap-2.5">
+          <Link to="/loans/create">
+            <Button variant="primary" icon={Plus}>
+              New Loan
+            </Button>
+          </Link>
+          <Link to="/repayments">
+            <Button variant="secondary" icon={CreditCard}>
+              Repayments
+            </Button>
+          </Link>
+          <Link to="/users/search">
+            <Button variant="outline" icon={Search}>
+              Search
+            </Button>
+          </Link>
+        </div>
+      </div>
+
+      {errorMsg && (
+        <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-brand-danger text-xs sm:text-sm flex items-start gap-2.5">
+          <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
+          <span>{errorMsg}</span>
+        </div>
+      )}
+
+      {/* Overdue Loans Urgent Alert Banner */}
+      {overdueLoans.length > 0 && (
+        <div className="p-4 sm:p-5 rounded-2xl bg-red-50 border border-red-200 text-red-800 space-y-3 shadow-xs">
+          <div className="flex items-center gap-2 font-bold text-sm text-brand-danger">
+            <AlertTriangle className="w-5 h-5 shrink-0" />
+            <span>Attention: You have {overdueLoans.length} loan agreement(s) past due date!</span>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            {overdueLoans.map((ov) => (
+              <div
+                key={ov._id}
+                className="p-3 bg-white rounded-xl border border-red-100 flex items-center justify-between text-xs"
+              >
+                <div>
+                  <p className="font-bold text-slate-900">{ov.description}</p>
+                  <p className="text-slate-500">
+                    Remaining: {ov.currency} {(ov.remainingBalance / 100).toFixed(2)}
+                  </p>
+                </div>
+                <Link to={`/loans/${ov._id}`}>
+                  <Button variant="danger" size="sm" className="text-xs py-1">
+                    Resolve
+                  </Button>
+                </Link>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* 6 Financial Metrics Cards */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5">
+        <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-xs space-y-1">
+          <div className="flex items-center justify-between text-slate-400">
+            <span className="text-[11px] font-semibold uppercase">Total Lent</span>
+            <ArrowUpRight className="w-4 h-4 text-emerald-600" />
+          </div>
+          <p className="text-lg sm:text-xl font-black text-slate-900 truncate">
+            ${((cards.totalLent || 0) / 100).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+          </p>
+          <p className="text-[10px] text-slate-400">Principal funded</p>
+        </div>
+
+        <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-xs space-y-1">
+          <div className="flex items-center justify-between text-slate-400">
+            <span className="text-[11px] font-semibold uppercase">Total Borrowed</span>
+            <ArrowDownLeft className="w-4 h-4 text-blue-600" />
+          </div>
+          <p className="text-lg sm:text-xl font-black text-slate-900 truncate">
+            ${((cards.totalBorrowed || 0) / 100).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+          </p>
+          <p className="text-[10px] text-slate-400">Principal taken</p>
+        </div>
+
+        <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-xs space-y-1">
+          <div className="flex items-center justify-between text-slate-400">
+            <span className="text-[11px] font-semibold uppercase">Outstanding Lent</span>
+            <Coins className="w-4 h-4 text-brand-primary" />
+          </div>
+          <p className="text-lg sm:text-xl font-black text-brand-primary truncate">
+            ${((cards.outstandingLent || 0) / 100).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+          </p>
+          <p className="text-[10px] text-slate-400">Receivable balance</p>
+        </div>
+
+        <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-xs space-y-1">
+          <div className="flex items-center justify-between text-slate-400">
+            <span className="text-[11px] font-semibold uppercase">Outstanding Due</span>
+            <CreditCard className="w-4 h-4 text-amber-600" />
+          </div>
+          <p className="text-lg sm:text-xl font-black text-amber-600 truncate">
+            ${((cards.outstandingBorrowed || 0) / 100).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+          </p>
+          <p className="text-[10px] text-slate-400">Payable balance</p>
+        </div>
+
+        <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-xs space-y-1">
+          <div className="flex items-center justify-between text-slate-400">
+            <span className="text-[11px] font-semibold uppercase">Active Loans</span>
+            <Clock className="w-4 h-4 text-blue-600" />
+          </div>
+          <p className="text-lg sm:text-xl font-black text-slate-900">
+            {cards.activeLoans || 0}
+          </p>
+          <p className="text-[10px] text-slate-400">Active agreements</p>
+        </div>
+
+        <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-xs space-y-1">
+          <div className="flex items-center justify-between text-slate-400">
+            <span className="text-[11px] font-semibold uppercase">Completed</span>
+            <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+          </div>
+          <p className="text-lg sm:text-xl font-black text-emerald-700">
+            {cards.completedLoans || 0}
+          </p>
+          <p className="text-[10px] text-slate-400">Fully cleared</p>
+        </div>
+      </div>
+
+      {/* Visual Analytics Charts (Recharts) */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Monthly Lending vs Borrowing Trends */}
+        <div className="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+          <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Express Service</p>
-              <p className="text-base font-bold text-slate-900 mt-0.5">
-                {loading ? 'Checking...' : healthData?.status === 'healthy' ? 'Healthy (Port 5000)' : 'Unavailable'}
-              </p>
-              <p className="text-xs text-slate-500 mt-1">
-                {healthData?.environment ? `Env: ${healthData.environment}` : 'Connecting to local backend'}
-              </p>
+              <h3 className="font-bold text-slate-900 text-base">Monthly Activity Trends</h3>
+              <p className="text-xs text-slate-500">6-Month Lending vs Borrowing Volume ($)</p>
             </div>
+            <TrendingUp className="w-5 h-5 text-brand-primary" />
           </div>
 
-          {/* Database Status */}
-          <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/80 flex items-start gap-3.5">
-            <div className="p-2.5 rounded-xl bg-emerald-100 text-emerald-700">
-              <Database className="w-5 h-5" />
-            </div>
-            <div>
-              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">MongoDB Atlas</p>
-              <p className="text-base font-bold text-slate-900 mt-0.5">
-                {loading ? 'Verifying...' : healthData?.database?.status === 'connected' ? 'Connected' : 'Offline'}
-              </p>
-              <p className="text-xs text-slate-500 mt-1">
-                Database: <span className="font-semibold text-brand-primary">{healthData?.database?.target || 'lendflow'}</span>
-              </p>
-            </div>
-          </div>
-
-          {/* Security Status */}
-          <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/80 flex items-start gap-3.5">
-            <div className="p-2.5 rounded-xl bg-blue-100 text-brand-primary">
-              <ShieldCheck className="w-5 h-5" />
-            </div>
-            <div>
-              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Security Controls</p>
-              <p className="text-base font-bold text-slate-900 mt-0.5">Helmet & CORS Active</p>
-              <p className="text-xs text-slate-500 mt-1">Error Shielding Enabled</p>
-            </div>
+          <div className="h-64 w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={charts} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="colorLent" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#3157D5" stopOpacity={0.4} />
+                    <stop offset="95%" stopColor="#3157D5" stopOpacity={0} />
+                  </linearGradient>
+                  <linearGradient id="colorBorrowed" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#16A36A" stopOpacity={0.4} />
+                    <stop offset="95%" stopColor="#16A36A" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#64748b' }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize: 11, fill: '#64748b' }} axisLine={false} tickLine={false} />
+                <Tooltip
+                  contentStyle={{ backgroundColor: '#17233C', color: '#fff', borderRadius: '12px', fontSize: '12px' }}
+                  formatter={(val) => [`$${Number(val).toFixed(2)}`]}
+                />
+                <Legend iconType="circle" wrapperStyle={{ fontSize: '11px', paddingTop: '10px' }} />
+                <Area type="monotone" dataKey="lent" name="Lent ($)" stroke="#3157D5" strokeWidth={2} fillOpacity={1} fill="url(#colorLent)" />
+                <Area type="monotone" dataKey="borrowed" name="Borrowed ($)" stroke="#16A36A" strokeWidth={2} fillOpacity={1} fill="url(#colorBorrowed)" />
+              </AreaChart>
+            </ResponsiveContainer>
           </div>
         </div>
 
-        {errorMsg && (
-          <div className="mt-4 p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs sm:text-sm flex items-center gap-2">
-            <AlertCircle className="w-4 h-4 shrink-0" />
-            <span>{errorMsg}</span>
-          </div>
-        )}
-      </section>
-
-      {/* Feature Pillar Highlights */}
-      <section id="architecture" className="space-y-4">
-        <h2 className="text-xl font-bold text-slate-900">Application Architecture Highlights</h2>
-        
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-2 hover:border-brand-primary/50 transition-colors">
-            <div className="w-9 h-9 rounded-lg bg-blue-50 text-brand-primary flex items-center justify-center font-bold">
-              01
+        {/* Repayment Flow Chart */}
+        <div className="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="font-bold text-slate-900 text-base">Repayment Cash Flow</h3>
+              <p className="text-xs text-slate-500">Confirmed installment payments by month ($)</p>
             </div>
-            <h3 className="font-semibold text-slate-900 text-sm">Dual-Role Workflows</h3>
-            <p className="text-xs text-slate-500 leading-relaxed">
-              Users can seamlessly act as both lender and borrower with complete separation of authorization records.
-            </p>
+            <CreditCard className="w-5 h-5 text-emerald-600" />
           </div>
 
-          <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-2 hover:border-brand-primary/50 transition-colors">
-            <div className="w-9 h-9 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
-              02
-            </div>
-            <h3 className="font-semibold text-slate-900 text-sm">Financial Integrity</h3>
-            <p className="text-xs text-slate-500 leading-relaxed">
-              Eliminates floating-point calculation errors through integer minor units and strict audit trails.
-            </p>
-          </div>
-
-          <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-2 hover:border-brand-primary/50 transition-colors">
-            <div className="w-9 h-9 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold">
-              03
-            </div>
-            <h3 className="font-semibold text-slate-900 text-sm">Mobile-First UI/UX</h3>
-            <p className="text-xs text-slate-500 leading-relaxed">
-              Designed from 320px mobile screens up to 1440px wide desktop displays without content clipping.
-            </p>
-          </div>
-
-          <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-2 hover:border-brand-primary/50 transition-colors">
-            <div className="w-9 h-9 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center font-bold">
-              04
-            </div>
-            <h3 className="font-semibold text-slate-900 text-sm">STRIDE Hardened</h3>
-            <p className="text-xs text-slate-500 leading-relaxed">
-              Built to withstand IDOR, NoSQL injection, brute force attacks, and token replay vulnerabilities.
-            </p>
+          <div className="h-64 w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={charts} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#64748b' }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize: 11, fill: '#64748b' }} axisLine={false} tickLine={false} />
+                <Tooltip
+                  contentStyle={{ backgroundColor: '#17233C', color: '#fff', borderRadius: '12px', fontSize: '12px' }}
+                  formatter={(val) => [`$${Number(val).toFixed(2)}`, 'Repaid']}
+                />
+                <Bar dataKey="repaid" name="Confirmed Repayments ($)" fill="#3157D5" radius={[6, 6, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
           </div>
         </div>
-      </section>
+      </div>
+
+      {/* Upcoming Due Dates & Recent Activity */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Upcoming Due Dates (1 col) */}
+        <div className="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+          <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+            <h3 className="font-bold text-slate-900 text-sm flex items-center gap-2">
+              <Calendar className="w-4 h-4 text-brand-primary" />
+              Upcoming Due Dates
+            </h3>
+            <span className="text-xs text-slate-400 font-semibold">{upcomingLoans.length}</span>
+          </div>
+
+          <div className="space-y-3">
+            {upcomingLoans.map((loan) => (
+              <div
+                key={loan._id}
+                className="p-3 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between text-xs hover:border-slate-300 transition"
+              >
+                <div className="truncate mr-2">
+                  <p className="font-bold text-slate-900 truncate">{loan.description}</p>
+                  <p className="text-brand-primary font-bold mt-0.5">
+                    {loan.currency} {(loan.remainingBalance / 100).toFixed(2)}
+                  </p>
+                  <p className="text-[11px] text-slate-400">
+                    Due: {new Date(loan.dueDate).toLocaleDateString()}
+                  </p>
+                </div>
+                <Link to={`/loans/${loan._id}`}>
+                  <Button variant="outline" size="sm" className="text-xs py-1 px-2.5">
+                    View
+                  </Button>
+                </Link>
+              </div>
+            ))}
+
+            {upcomingLoans.length === 0 && (
+              <p className="text-xs text-slate-400 italic text-center py-6">
+                No active loans pending near-term due dates.
+              </p>
+            )}
+          </div>
+        </div>
+
+        {/* Recent Activity (2 cols) */}
+        <div className="lg:col-span-2 bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+          <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+            <h3 className="font-bold text-slate-900 text-sm flex items-center gap-2">
+              <Clock className="w-4 h-4 text-brand-primary" />
+              Recent Transactions & Activity
+            </h3>
+            <Link to="/loans" className="text-xs font-bold text-brand-primary hover:underline">
+              View all &rarr;
+            </Link>
+          </div>
+
+          <div className="space-y-2.5">
+            {recentRepayments.slice(0, 3).map((r) => (
+              <div
+                key={r._id}
+                className="p-3 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between text-xs"
+              >
+                <div className="flex items-center gap-3 truncate">
+                  <div className="w-8 h-8 rounded-xl bg-blue-100 text-brand-primary flex items-center justify-center font-bold shrink-0">
+                    <CreditCard className="w-4 h-4" />
+                  </div>
+                  <div className="truncate">
+                    <p className="font-bold text-slate-900 truncate">Repayment: {r.loan?.description || 'Loan'}</p>
+                    <p className="text-[11px] text-slate-500">
+                      From: {r.borrower?.fullName} &bull; {new Date(r.paymentDate).toLocaleDateString()}
+                    </p>
+                  </div>
+                </div>
+                <div className="text-right shrink-0">
+                  <p className="font-bold text-emerald-700">
+                    {r.currency} {(r.amount / 100).toFixed(2)}
+                  </p>
+                  <Badge status={r.status}>{r.status}</Badge>
+                </div>
+              </div>
+            ))}
+
+            {recentLoans.slice(0, 3).map((l) => (
+              <div
+                key={l._id}
+                className="p-3 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between text-xs"
+              >
+                <div className="flex items-center gap-3 truncate">
+                  <div className="w-8 h-8 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center font-bold shrink-0">
+                    <Coins className="w-4 h-4" />
+                  </div>
+                  <div className="truncate">
+                    <p className="font-bold text-slate-900 truncate">Loan: {l.description}</p>
+                    <p className="text-[11px] text-slate-500">
+                      Lender: {l.lender?.fullName} &bull; Borrower: {l.borrower?.fullName}
+                    </p>
+                  </div>
+                </div>
+                <div className="text-right shrink-0">
+                  <p className="font-bold text-slate-900">
+                    {l.currency} {(l.amount / 100).toFixed(2)}
+                  </p>
+                  <Badge status={l.status}>{l.status}</Badge>
+                </div>
+              </div>
+            ))}
+
+            {recentLoans.length === 0 && recentRepayments.length === 0 && (
+              <p className="text-xs text-slate-400 italic text-center py-6">
+                No recent transactions recorded yet.
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
-

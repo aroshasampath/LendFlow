@@ -14,13 +14,7 @@ LendFlow is a secure, responsive, full-stack MERN application for managing perso
 - [x] **Stage 5: User Profiles & Privacy-Preserving User Search** *(Completed & Verified)*
 - [x] **Stage 6: Loan Management (Lender/Borrower Lifecycle & State Machine)** *(Completed & Verified)*
 - [x] **Stage 7: Repayment Management (Idempotency, Financial Audit Trail)** *(Completed & Verified)*
-- [ ] **Stage 8: Dashboard & Notification Engine**
-- [ ] **Stage 3: Responsive Design System & Layout Foundation**
-- [ ] **Stage 4: User Authentication & Security (MFA, JWT, Rotation)**
-- [ ] **Stage 5: User Profiles & Privacy-Preserving User Search**
-- [ ] **Stage 6: Loan Management (Lender/Borrower Lifecycle & State Machine)**
-- [ ] **Stage 7: Repayment Management (Idempotency, Financial Audit Trail)**
-- [ ] **Stage 8: Dashboard & Notification Engine**
+- [x] **Stage 8: Dashboard & Notification Engine** *(Completed & Verified)*
 - [ ] **Stage 9: Fintech UI/UX Design System & Interactive Pages**
 - [ ] **Stage 10: User-Friendly Error Handling & Centralized Middleware**
 - [ ] **Stage 11: Security Testing & STRIDE Threat Model Hardening**

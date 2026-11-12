@@ -17,8 +17,10 @@ import {
   User,
   Coins,
   CreditCard,
+  Bell,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useNotifications } from '../context/NotificationContext';
 
 export const Sidebar = ({
   isOpenMobile,
@@ -27,6 +29,8 @@ export const Sidebar = ({
   onToggleCollapseDesktop,
 }) => {
   const { user, isAuthenticated, logout } = useAuth();
+  const notificationCtx = useNotifications();
+  const unreadCount = notificationCtx?.unreadCount || 0;
 
   const navItems = [
     { name: 'Dashboard', path: '/', icon: LayoutDashboard },
@@ -34,6 +38,7 @@ export const Sidebar = ({
       ? [
           { name: 'Loan Agreements', path: '/loans', icon: Coins },
           { name: 'Repayments', path: '/repayments', icon: CreditCard },
+          { name: 'Notifications', path: '/notifications', icon: Bell, badge: unreadCount },
           { name: 'Search Members', path: '/users/search', icon: Search },
           { name: 'My Profile', path: '/profile', icon: User },
           { name: 'Security Settings', path: '/security-settings', icon: KeyRound },
@@ -91,8 +96,22 @@ export const Sidebar = ({
               }
               title={isCollapsedDesktop ? item.name : undefined}
             >
-              <Icon className="w-5 h-5 shrink-0" />
-              {!isCollapsedDesktop && <span className="truncate">{item.name}</span>}
+              <div className="relative shrink-0">
+                <Icon className="w-5 h-5" />
+                {isCollapsedDesktop && item.badge > 0 && (
+                  <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full" />
+                )}
+              </div>
+              {!isCollapsedDesktop && (
+                <div className="flex items-center justify-between flex-1 min-w-0">
+                  <span className="truncate">{item.name}</span>
+                  {item.badge > 0 && (
+                    <span className="px-1.5 py-0.5 text-[10px] font-bold bg-red-500 text-white rounded-full">
+                      {item.badge > 99 ? '99+' : item.badge}
+                    </span>
+                  )}
+                </div>
+              )}
             </NavLink>
           );
         })}
