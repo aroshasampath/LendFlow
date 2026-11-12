@@ -18,12 +18,10 @@ import {
   XCircle,
   AlertTriangle
 } from 'lucide-react';
-import { useViewport } from '../hooks/useViewport';
 import { useAuth } from '../context/AuthContext';
 import { useNotifications } from '../context/NotificationContext';
 
-export const Navbar = ({ isLiveConnected, onOpenSidebarMobile }) => {
-  const { width, breakpoint } = useViewport();
+export const Navbar = ({ onOpenSidebarMobile }) => {
   const { user, isAuthenticated, logout } = useAuth();
   const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications();
   const navigate = useNavigate();
@@ -135,48 +133,11 @@ export const Navbar = ({ isLiveConnected, onOpenSidebarMobile }) => {
                   </NavLink>
                 </>
               )}
-              <NavLink
-                to="/responsive-qa"
-                className={({ isActive }) =>
-                  `px-3 py-1.5 rounded-xl text-xs font-semibold transition-all ${
-                    isActive
-                      ? 'bg-brand-primaryLight text-brand-primary font-bold'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-                  }`
-                }
-              >
-                Responsive QA
-              </NavLink>
             </nav>
           </div>
 
-          {/* Center / Right: Viewport Pill, Status, & Auth */}
+          {/* Center / Right: Auth & Notifications */}
           <div className="flex items-center gap-2 sm:gap-3">
-            {/* Live Viewport Indicator Pill */}
-            <div className="hidden xs:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-100 border border-slate-200 text-[11px] font-mono text-slate-600">
-              <span className="font-semibold text-brand-primary">{width}px</span>
-              <span className="text-slate-300">|</span>
-              <span className="uppercase text-[10px] font-bold">{breakpoint.split(' ')[0]}</span>
-            </div>
-
-            {/* Atlas Connection Badge */}
-            <div
-              className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${
-                isLiveConnected
-                  ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                  : 'bg-amber-50 text-amber-700 border-amber-200'
-              }`}
-            >
-              <span
-                className={`w-2 h-2 rounded-full ${
-                  isLiveConnected ? 'bg-brand-success animate-pulse' : 'bg-brand-warning'
-                }`}
-              />
-              <span className="hidden sm:inline">
-                {isLiveConnected ? 'Atlas Live' : 'Connecting'}
-              </span>
-            </div>
-
             {/* Notifications Dropdown */}
             {isAuthenticated && (
               <div className="relative">
