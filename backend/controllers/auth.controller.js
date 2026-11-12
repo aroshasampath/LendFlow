@@ -126,10 +126,10 @@ export const login = async (req, res, next) => {
   try {
     const { loginIdentifier, password } = req.body;
 
-    if (!loginIdentifier || !password) {
+    if (!loginIdentifier || !password || typeof loginIdentifier !== 'string' || typeof password !== 'string') {
       return res.status(400).json({
         success: false,
-        message: 'Please provide both your email/username and password.',
+        message: 'Please provide valid text credentials for your email/username and password.',
       });
     }
 
