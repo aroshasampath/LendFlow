@@ -31,7 +31,7 @@ export const ResponsiveDesignShowcase = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [confirmModalOpen, setConfirmModalOpen] = useState(false);
   const [testFormValues, setTestFormValues] = useState({
-    name: 'Arosha Sampath',
+    name: 'John Doe',
     email: 'test@lendflow.io',
     amount: '25000',
   });
@@ -259,7 +259,7 @@ export const ResponsiveDesignShowcase = () => {
             <Input
               label="Borrower Name"
               name="name"
-              placeholder="e.g. Arosha Sampath"
+              placeholder="e.g. John Doe"
               value={testFormValues.name}
               onChange={(e) => setTestFormValues({ ...testFormValues, name: e.target.value })}
               required
