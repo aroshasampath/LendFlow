@@ -2,9 +2,6 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import {
   LayoutDashboard,
-  Layers,
-  Activity,
-  Smartphone,
   ShieldCheck,
   ChevronLeft,
   ChevronRight,
@@ -36,17 +33,14 @@ export const Sidebar = ({
     { name: 'Dashboard', path: '/', icon: LayoutDashboard },
     ...(isAuthenticated
       ? [
-          { name: 'Debts & IOUs', path: '/loans', icon: Coins },
-          { name: 'Settlements', path: '/repayments', icon: CreditCard },
-          { name: 'Notifications', path: '/notifications', icon: Bell, badge: unreadCount },
-          { name: 'Find Friends', path: '/users/search', icon: Search },
-          { name: 'My Profile', path: '/profile', icon: User },
-          { name: 'Security Settings', path: '/security-settings', icon: KeyRound },
-        ]
+        { name: 'Debts & IOUs', path: '/loans', icon: Coins },
+        { name: 'Settlements', path: '/repayments', icon: CreditCard },
+        { name: 'Notifications', path: '/notifications', icon: Bell, badge: unreadCount },
+        { name: 'Find Friends', path: '/users/search', icon: Search },
+        { name: 'My Profile', path: '/profile', icon: User },
+        { name: 'Security Settings', path: '/security-settings', icon: KeyRound },
+      ]
       : []),
-    { name: 'Responsive QA', path: '/responsive-qa', icon: Smartphone },
-    { name: 'Architecture', path: '/architecture', icon: Layers },
-    { name: 'System Status', path: '/status', icon: Activity },
   ];
 
   const sidebarContent = (
@@ -88,10 +82,9 @@ export const Sidebar = ({
               to={item.path}
               onClick={onCloseMobile}
               className={({ isActive }) =>
-                `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
-                  isActive
-                    ? 'bg-brand-primary text-white shadow-md shadow-brand-primary/25 font-semibold'
-                    : 'text-slate-300 hover:bg-slate-800/80 hover:text-white'
+                `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${isActive
+                  ? 'bg-brand-primary text-white shadow-md shadow-brand-primary/25 font-semibold'
+                  : 'text-slate-300 hover:bg-slate-800/80 hover:text-white'
                 } ${isCollapsedDesktop ? 'justify-center' : ''}`
               }
               title={isCollapsedDesktop ? item.name : undefined}
