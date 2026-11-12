@@ -237,3 +237,4 @@ export const getPublicProfile = async (req, res, next) => {
     next(error);
   }
 };
+

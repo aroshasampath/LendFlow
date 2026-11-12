@@ -18,3 +18,4 @@ router.get('/search', searchUsers);
 router.get('/profile/:identifier', getPublicProfile);
 
 export default router;
+
