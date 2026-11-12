@@ -22,13 +22,15 @@ import { LoanDetailsPage } from './pages/LoanDetailsPage';
 import { RepaymentsPage } from './pages/RepaymentsPage';
 import { NotificationsPage } from './pages/NotificationsPage';
 import { NotificationProvider } from './context/NotificationContext';
+import { ErrorBoundary } from './components/ErrorBoundary';
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <AuthProvider>
-        <NotificationProvider>
-          <MainLayout>
+    <ErrorBoundary>
+      <BrowserRouter>
+        <AuthProvider>
+          <NotificationProvider>
+            <MainLayout>
             <Routes>
             {/* Public Pages */}
             <Route path="/" element={<HomePage />} />
@@ -126,5 +128,6 @@ export default function App() {
       </NotificationProvider>
     </AuthProvider>
   </BrowserRouter>
+</ErrorBoundary>
   );
 }
