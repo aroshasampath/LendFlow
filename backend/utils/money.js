@@ -36,3 +36,4 @@ export const formatCurrency = (minorUnits, currency = 'USD') => {
     return `${currency.toUpperCase()} ${major.toFixed(2)}`;
   }
 };
+

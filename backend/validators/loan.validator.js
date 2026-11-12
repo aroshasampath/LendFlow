@@ -51,3 +51,4 @@ export const validateLoanCreation = ({
 
   return { isValid: true };
 };
+
