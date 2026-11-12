@@ -53,3 +53,4 @@ export const Breadcrumbs = ({ items = [], className = '' }) => {
     </nav>
   );
 };
+

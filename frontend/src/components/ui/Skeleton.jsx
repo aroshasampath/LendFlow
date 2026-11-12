@@ -45,3 +45,4 @@ export const SkeletonTable = ({ rows = 5, cols = 4 }) => {
     </div>
   );
 };
+
