@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 /**
  * Connect to MongoDB Atlas with robust error handling and event listeners.
- * Ensures the target database is 'lendflow' and logs safely without exposing credentials.
+ * Targets the 'lendflow' database and logs safely without exposing credentials.
  */
 export const connectDB = async () => {
   const uri = process.env.MONGODB_URI;
@@ -14,22 +14,20 @@ export const connectDB = async () => {
   }
 
   try {
-    // Mask sensitive connection details for secure logging
-    const maskedUri = uri.replace(/\/\/([^:]+):([^@]+)@/, '//$1:****@');
-    console.log(`[Database] Initiating connection to MongoDB...`);
+    console.log(`[Database] Initiating secure connection to MongoDB Atlas...`);
 
     const connectionInstance = await mongoose.connect(uri, {
       dbName: 'lendflow', // Enforce lendflow database
-      autoIndex: process.env.NODE_ENV !== 'production', // Build indexes in development
-      serverSelectionTimeoutMS: 8000, // Fail fast if cluster is unreachable or IP blocked
+      autoIndex: process.env.NODE_ENV !== 'production',
+      serverSelectionTimeoutMS: 10000,
     });
 
     console.log(`[Database] MongoDB Connected successfully to host: ${connectionInstance.connection.host}`);
-    console.log(`[Database] Active Database Name: ${connectionInstance.connection.name}`);
+    console.log(`[Database] Target Database: ${connectionInstance.connection.name}`);
 
-    // Register connection event monitors
-    mongoose.connection.on('error', (err) => {
-      console.error('[Database Runtime Error] MongoDB connection error occurred.');
+    // Register runtime event listeners
+    mongoose.connection.on('error', () => {
+      console.error('[Database Runtime Error] An unexpected database connection error occurred.');
     });
 
     mongoose.connection.on('disconnected', () => {
@@ -38,8 +36,7 @@ export const connectDB = async () => {
 
     return connectionInstance;
   } catch (error) {
-    console.error(`[Database Connection Failure] ${error.message}`);
+    console.error(`[Database Connection Failure] Failed to connect to MongoDB Atlas.`);
     throw error;
   }
 };
-

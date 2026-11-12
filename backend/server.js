@@ -4,15 +4,16 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import { connectDB } from './config/db.js';
+import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
 
-// Load environment variables
+// Load environment configuration
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
 
-// Security Middlewares
+// Security & Parsing Middlewares
 app.use(helmet());
 app.use(
   cors({
@@ -20,13 +21,12 @@ app.use(
     credentials: true,
   })
 );
-app.use(express.json({ limit: '10kb' })); // Body limit prevents payload flooding
+app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 
 /**
  * Health Check Endpoint
  * GET /api/health
- * Returns service status, MongoDB connection health, uptime, and timestamp.
  */
 app.get('/api/health', (req, res) => {
   const isDbConnected = mongoose.connection.readyState === 1;
@@ -55,7 +55,7 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Root welcome check
+// Root welcome status
 app.get('/', (req, res) => {
   res.json({
     name: 'LendFlow API',
@@ -66,26 +66,10 @@ app.get('/', (req, res) => {
 });
 
 // 404 Route Handler
-app.use((req, res) => {
-  res.status(404).json({
-    success: false,
-    message: 'The requested resource could not be found.',
-  });
-});
+app.use(notFoundHandler);
 
 // Centralized Safe Error Handling Middleware
-app.use((err, req, res, next) => {
-  // Safe console log on backend only
-  console.error('[Unhandled Error]', err.message);
-
-  res.status(err.status || 500).json({
-    success: false,
-    message:
-      process.env.NODE_ENV === 'production'
-        ? 'Something went wrong on our side. Please try again later.'
-        : err.message || 'Internal server error occurred.',
-  });
-});
+app.use(errorHandler);
 
 // Initialize Database and Start Server
 const startServer = async () => {
@@ -93,15 +77,12 @@ const startServer = async () => {
     if (process.env.MONGODB_URI && process.env.MONGODB_URI !== 'YOUR_MONGODB_CONNECTION_STRING') {
       await connectDB();
     } else {
-      console.warn(
-        '\n[Configuration Notice] MONGODB_URI is currently set to placeholder in backend/.env.' +
-        '\nUpdate backend/.env with your MongoDB Atlas connection string to connect to the database.\n'
-      );
+      console.warn('[Configuration Notice] MONGODB_URI is not configured in backend/.env.');
     }
 
     app.listen(PORT, () => {
       console.log(`[LendFlow Server] Running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
-      console.log(`[LendFlow Server] Health check available at: http://localhost:${PORT}/api/health\n`);
+      console.log(`[LendFlow Server] Health check: http://localhost:${PORT}/api/health\n`);
     });
   } catch (err) {
     console.error('[Startup Failure] Failed to start server:', err.message);
@@ -110,4 +91,3 @@ const startServer = async () => {
 };
 
 startServer();
-
