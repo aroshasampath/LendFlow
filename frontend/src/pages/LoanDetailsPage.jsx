@@ -152,8 +152,8 @@ export const LoanDetailsPage = () => {
     <div className="max-w-4xl mx-auto space-y-6">
       <Breadcrumbs
         items={[
-          { label: 'Loan Agreements', path: '/loans' },
-          { label: loan.description || 'Loan Details' },
+          { label: 'All Debts', path: '/loans' },
+          { label: loan.description || 'Details' },
         ]}
       />
 
@@ -163,16 +163,16 @@ export const LoanDetailsPage = () => {
           <Link
             to="/loans"
             className="p-2 rounded-xl text-slate-500 hover:text-slate-800 hover:bg-white transition border border-slate-200"
-            aria-label="Back to Loans"
+            aria-label="Back to Debts"
           >
             <ArrowLeft className="w-5 h-5" />
           </Link>
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-2xl font-extrabold text-slate-900">{loan.description}</h1>
-              <Badge status={loan.status}>{loan.status.toUpperCase()}</Badge>
+              <Badge status={loan.status}>{loan.status === 'completed' ? 'SETTLED' : loan.status.toUpperCase()}</Badge>
             </div>
-            <p className="text-xs text-slate-400 font-mono mt-0.5">Agreement ID: {loan._id}</p>
+            <p className="text-xs text-slate-400 font-mono mt-0.5">Record ID: {loan._id}</p>
           </div>
         </div>
 
@@ -185,7 +185,7 @@ export const LoanDetailsPage = () => {
               loading={actionLoading}
               onClick={handleAcceptLoan}
             >
-              Accept Loan
+              Confirm Record
             </Button>
             <Button
               variant="danger"
@@ -203,14 +203,14 @@ export const LoanDetailsPage = () => {
             icon={Ban}
             onClick={() => setCancelModalOpen(true)}
           >
-            Cancel Proposal
+            Cancel Record
           </Button>
         )}
 
         {isActive && (
           <Link to={`/repayments?loanId=${loan._id}`}>
             <Button variant="primary" icon={CreditCard}>
-              View Repayments
+              View / Make Payment
             </Button>
           </Link>
         )}
@@ -226,7 +226,7 @@ export const LoanDetailsPage = () => {
       {/* Financial Overview Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-1">
-          <p className="text-xs font-semibold text-slate-500 uppercase">Original Principal</p>
+          <p className="text-xs font-semibold text-slate-500 uppercase">Original Amount</p>
           <p className="text-2xl font-extrabold text-slate-900">
             {loan.currency} {(loan.amount / 100).toLocaleString('en-US', { minimumFractionDigits: 2 })}
           </p>
@@ -236,7 +236,7 @@ export const LoanDetailsPage = () => {
         </div>
 
         <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-1">
-          <p className="text-xs font-semibold text-slate-500 uppercase">Outstanding Balance</p>
+          <p className="text-xs font-semibold text-slate-500 uppercase">Remaining to Pay</p>
           <p className="text-2xl font-extrabold text-brand-primary">
             {loan.currency} {(loan.remainingBalance / 100).toLocaleString('en-US', { minimumFractionDigits: 2 })}
           </p>
@@ -244,11 +244,11 @@ export const LoanDetailsPage = () => {
         </div>
 
         <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-1">
-          <p className="text-xs font-semibold text-slate-500 uppercase">Total Repaid to Date</p>
+          <p className="text-xs font-semibold text-slate-500 uppercase">Total Paid Back</p>
           <p className="text-2xl font-extrabold text-emerald-600">
             {loan.currency} {(loan.totalRepaid / 100).toLocaleString('en-US', { minimumFractionDigits: 2 })}
           </p>
-          <p className="text-xs text-slate-400">Due on {new Date(loan.dueDate).toLocaleDateString()}</p>
+          <p className="text-xs text-slate-400">Return by {new Date(loan.dueDate).toLocaleDateString()}</p>
         </div>
       </div>
 
@@ -257,7 +257,7 @@ export const LoanDetailsPage = () => {
         {/* Lender Card */}
         <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3">
           <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Lender</span>
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Who Paid / Lent</span>
             {isLender && <span className="text-xs font-semibold text-brand-primary">(You)</span>}
           </div>
           <div className="flex items-center gap-3">
@@ -290,7 +290,7 @@ export const LoanDetailsPage = () => {
         {/* Borrower Card */}
         <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3">
           <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Borrower</span>
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Who Received / Borrowed</span>
             {isBorrower && <span className="text-xs font-semibold text-brand-primary">(You)</span>}
           </div>
           <div className="flex items-center gap-3">
@@ -324,7 +324,7 @@ export const LoanDetailsPage = () => {
       {/* Loan Notes */}
       {loan.notes && (
         <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-2">
-          <h3 className="font-bold text-slate-900 text-sm">Agreement Terms & Notes</h3>
+          <h3 className="font-bold text-slate-900 text-sm">Notes & Details</h3>
           <p className="text-xs sm:text-sm text-slate-600 leading-relaxed bg-slate-50 p-3.5 rounded-xl border border-slate-100">
             {loan.notes}
           </p>
@@ -335,7 +335,7 @@ export const LoanDetailsPage = () => {
       <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
         <h3 className="font-bold text-slate-900 text-sm flex items-center gap-2">
           <History className="w-4 h-4 text-brand-primary" />
-          Audit Trail & Agreement Timeline
+          History & Activity Timeline
         </h3>
 
         <div className="space-y-4 pl-2 border-l-2 border-slate-100">
@@ -363,27 +363,27 @@ export const LoanDetailsPage = () => {
       <Modal
         isOpen={rejectModalOpen}
         onClose={() => setRejectModalOpen(false)}
-        title="Decline Loan Agreement"
+        title="Decline Record"
       >
         <form onSubmit={handleRejectLoan} className="space-y-4">
           <p className="text-xs text-slate-600">
-            Are you sure you want to decline this loan agreement? Please provide an optional reason for the lender.
+            Are you sure you want to decline this record? You can add an optional reason.
           </p>
 
           <Input
-            label="Reason for Declining (Optional)"
+            label="Reason (Optional)"
             name="rejectionReason"
-            placeholder="e.g. Terms do not suit current schedule"
+            placeholder="e.g. Incorrect amount or already paid"
             value={rejectionReason}
             onChange={(e) => setRejectionReason(e.target.value)}
           />
 
           <div className="flex gap-2 justify-end pt-2">
             <Button variant="secondary" size="sm" onClick={() => setRejectModalOpen(false)}>
-              Keep Proposal
+              Keep
             </Button>
             <Button variant="danger" size="sm" type="submit" loading={actionLoading}>
-              Confirm Decline
+              Decline
             </Button>
           </div>
         </form>
@@ -393,17 +393,17 @@ export const LoanDetailsPage = () => {
       <Modal
         isOpen={cancelModalOpen}
         onClose={() => setCancelModalOpen(false)}
-        title="Cancel Loan Proposal"
+        title="Cancel Record"
       >
         <form onSubmit={handleCancelLoan} className="space-y-4">
           <p className="text-xs text-slate-600">
-            As the lender, you can cancel this loan proposal since it is still pending borrower review.
+            You can cancel this record while it is still waiting for confirmation.
           </p>
 
           <Input
-            label="Reason for Cancellation (Optional)"
+            label="Reason (Optional)"
             name="cancellationReason"
-            placeholder="e.g. Agreement details modified"
+            placeholder="e.g. Entered by mistake or changed mind"
             value={cancellationReason}
             onChange={(e) => setCancellationReason(e.target.value)}
           />
@@ -413,7 +413,7 @@ export const LoanDetailsPage = () => {
               Back
             </Button>
             <Button variant="danger" size="sm" type="submit" loading={actionLoading}>
-              Cancel Loan
+              Cancel Record
             </Button>
           </div>
         </form>

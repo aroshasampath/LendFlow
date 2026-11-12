@@ -277,12 +277,12 @@ export const RepaymentsPage = () => {
 
   return (
     <div className="space-y-6 max-w-6xl mx-auto">
-      <Breadcrumbs items={[{ label: 'Repayments' }]} />
+      <Breadcrumbs items={[{ label: 'Payments' }]} />
 
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900">Settlements & Repayments</h1>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900">Payments & Settlements</h1>
           <p className="text-xs sm:text-sm text-slate-500 mt-1">
             Record payments when debts are settled. Both sides stay verified with zero confusion.
           </p>
@@ -293,7 +293,7 @@ export const RepaymentsPage = () => {
           icon={Plus}
           onClick={() => setSubmitModalOpen(true)}
         >
-          + Record Settlement
+          + Record Payment
         </Button>
       </div>
 
@@ -301,9 +301,9 @@ export const RepaymentsPage = () => {
       {!loanIdFromUrl && (
         <div className="flex border-b border-slate-200 gap-6 text-sm font-semibold">
           {[
-            { key: 'all', label: 'All Settlements' },
-            { key: 'lender', label: '🟢 Incoming to Confirm' },
-            { key: 'borrower', label: '🔴 Outgoing Payments' },
+            { key: 'all', label: 'All Payments' },
+            { key: 'lender', label: '🟢 Money Received' },
+            { key: 'borrower', label: '🔴 Money Paid' },
           ].map((tab) => (
             <button
               key={tab.key}
@@ -364,9 +364,9 @@ export const RepaymentsPage = () => {
       ) : repayments.length === 0 ? (
         <EmptyState
           icon={CreditCard}
-          title="No repayments found"
-          description="There are currently no repayment records matching your selected filters. You can record a new repayment installment."
-          actionText="Submit Repayment"
+          title="No payments found"
+          description="No payment records found. When someone pays back money, you can record it here."
+          actionText="+ Record Payment"
           actionOnClick={() => setSubmitModalOpen(true)}
         />
       ) : (
@@ -411,12 +411,12 @@ export const RepaymentsPage = () => {
       <Modal
         isOpen={submitModalOpen}
         onClose={() => setSubmitModalOpen(false)}
-        title="Submit Loan Repayment"
+        title="Record a Payment"
       >
         <form onSubmit={handleSubmitRepayment} className="space-y-4">
           <div className="space-y-1.5">
             <label className="block text-xs sm:text-sm font-semibold text-slate-700">
-              Select Loan Agreement
+              Select Debt / Expense
             </label>
             <select
               name="loanId"
@@ -425,7 +425,7 @@ export const RepaymentsPage = () => {
               required
               className="w-full text-sm rounded-xl border border-slate-300 bg-white text-slate-900 px-3.5 py-2.5 min-h-[44px] focus:outline-none focus:ring-2 focus:ring-brand-primary"
             >
-              <option value="">-- Choose active loan --</option>
+              <option value="">-- Choose active record --</option>
               {activeLoans.map((l) => {
                 const isLender = l.lender?._id === user?.id || l.lender === user?.id;
                 const otherParty = isLender ? l.borrower : l.lender;
@@ -439,7 +439,7 @@ export const RepaymentsPage = () => {
           </div>
 
           <Input
-            label="Repayment Amount"
+            label="Payment Amount"
             name="amount"
             type="number"
             step="0.01"
@@ -449,7 +449,7 @@ export const RepaymentsPage = () => {
             onChange={(e) => setSubmitForm({ ...submitForm, amount: e.target.value })}
             required
             icon={Coins}
-            helperText="Cannot exceed the loan's outstanding balance."
+            helperText="Cannot exceed remaining balance."
           />
 
           <Input
@@ -463,9 +463,9 @@ export const RepaymentsPage = () => {
           />
 
           <Input
-            label="Payment Reference / Receipt ID (Optional)"
+            label="Note / Reference (Optional)"
             name="paymentReference"
-            placeholder="e.g. Bank slip, transaction ID, cash receipt"
+            placeholder="e.g. Cash in hand, bank transfer, etc."
             value={submitForm.paymentReference}
             onChange={(e) => setSubmitForm({ ...submitForm, paymentReference: e.target.value })}
             icon={FileText}
@@ -473,13 +473,13 @@ export const RepaymentsPage = () => {
 
           <div className="space-y-1.5">
             <label className="block text-xs sm:text-sm font-semibold text-slate-700">
-              Payment Notes (Optional)
+              Extra Note (Optional)
             </label>
             <textarea
               name="notes"
               rows={2}
               maxLength={500}
-              placeholder="Any details for the lender..."
+              placeholder="Any details about this payment..."
               value={submitForm.notes}
               onChange={(e) => setSubmitForm({ ...submitForm, notes: e.target.value })}
               className="w-full text-sm rounded-xl border border-slate-300 p-3 focus:outline-none focus:ring-2 focus:ring-brand-primary placeholder:text-slate-400 text-slate-900"
@@ -489,7 +489,7 @@ export const RepaymentsPage = () => {
           <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800 flex items-start gap-2">
             <ShieldCheck className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
             <span>
-              The outstanding balance will be reduced immediately after the lender verifies and confirms the receipt.
+              Remaining balance will be updated once confirmed.
             </span>
           </div>
 
@@ -498,7 +498,7 @@ export const RepaymentsPage = () => {
               Cancel
             </Button>
             <Button variant="primary" size="sm" type="submit" loading={submitLoading}>
-              Submit Repayment
+              Save Payment
             </Button>
           </div>
         </form>
@@ -508,11 +508,11 @@ export const RepaymentsPage = () => {
       <Modal
         isOpen={confirmModalOpen}
         onClose={() => setConfirmModalOpen(false)}
-        title="Confirm Received Repayment"
+        title="Confirm Received Payment"
       >
         <div className="space-y-4">
           <p className="text-xs text-slate-600">
-            Please confirm that you have received this payment from the borrower:
+            Please confirm you received this payment:
           </p>
 
           <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 text-xs space-y-2">
@@ -523,7 +523,7 @@ export const RepaymentsPage = () => {
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-slate-500">Borrower:</span>
+              <span className="text-slate-500">Paid by:</span>
               <span className="font-semibold text-slate-800">{selectedRepayment?.borrower?.fullName}</span>
             </div>
             <div className="flex justify-between">
@@ -533,7 +533,7 @@ export const RepaymentsPage = () => {
           </div>
 
           <p className="text-xs text-slate-500">
-            Confirming will deduct this amount from the loan&apos;s outstanding balance. This action cannot be undone.
+            Confirming will deduct this amount from the remaining balance.
           </p>
 
           <div className="flex gap-2 justify-end pt-2">
@@ -541,7 +541,7 @@ export const RepaymentsPage = () => {
               Back
             </Button>
             <Button variant="primary" size="sm" loading={actionLoading} onClick={handleConfirmPayment}>
-              Confirm & Deduct Balance
+              Confirm Payment
             </Button>
           </div>
         </div>
@@ -551,27 +551,27 @@ export const RepaymentsPage = () => {
       <Modal
         isOpen={rejectModalOpen}
         onClose={() => setRejectModalOpen(false)}
-        title="Decline Repayment Request"
+        title="Decline Payment"
       >
         <form onSubmit={handleRejectPayment} className="space-y-4">
           <p className="text-xs text-slate-600">
-            If you have not received this payment or the reference is incorrect, you can decline it.
+            If you didn&apos;t receive this money or the details are wrong, you can decline it.
           </p>
 
           <Input
-            label="Reason for Declining (Optional)"
+            label="Reason (Optional)"
             name="rejectionReason"
-            placeholder="e.g. Deposit not reflected in bank account"
+            placeholder="e.g. Haven't received the money yet"
             value={rejectionReason}
             onChange={(e) => setRejectionReason(e.target.value)}
           />
 
           <div className="flex gap-2 justify-end pt-2">
             <Button variant="secondary" size="sm" onClick={() => setRejectModalOpen(false)}>
-              Keep Under Review
+              Keep
             </Button>
             <Button variant="danger" size="sm" type="submit" loading={actionLoading}>
-              Confirm Decline
+              Decline Payment
             </Button>
           </div>
         </form>

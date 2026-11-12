@@ -64,13 +64,13 @@ export const UserSearchPage = () => {
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto">
-      <Breadcrumbs items={[{ label: 'Search Members' }]} />
+      <Breadcrumbs items={[{ label: 'Find Friends' }]} />
 
       {/* Header */}
       <div>
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900">Search Members</h1>
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900">Find Friends</h1>
         <p className="text-xs sm:text-sm text-slate-500 mt-1">
-          Find registered users to propose loans, track agreements, or view verified profiles.
+          Find friends and roommates to track shared expenses and debts.
         </p>
       </div>
 
@@ -79,7 +79,7 @@ export const UserSearchPage = () => {
         <div className="flex flex-col sm:flex-row gap-3">
           <div className="flex-1">
             <Input
-              placeholder="Search by full name, @username, or unique user ID..."
+              placeholder="Search by name or @username..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               icon={Search}
@@ -206,14 +206,14 @@ export const UserSearchPage = () => {
       ) : debouncedQuery ? (
         <EmptyState
           icon={Search}
-          title="No users found"
-          description={`We couldn't find any users matching "${debouncedQuery}". Please check the username or spelling and try again.`}
+          title="No friends found"
+          description={`We couldn't find anyone matching "${debouncedQuery}". Please check the username or spelling and try again.`}
         />
       ) : (
         <EmptyState
           icon={Search}
-          title="Start Searching for Members"
-          description="Search by full name, @username, or unique user ID to view profiles and propose loan agreements."
+          title="Search for Friends"
+          description="Search by name or @username to view profiles and share expenses."
         />
       )}
     </div>

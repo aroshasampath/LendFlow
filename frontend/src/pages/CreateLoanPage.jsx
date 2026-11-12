@@ -111,8 +111,8 @@ export const CreateLoanPage = () => {
     <div className="max-w-4xl mx-auto space-y-6">
       <Breadcrumbs
         items={[
-          { label: 'Debts & IOUs', path: '/loans' },
-          { label: isLent ? 'Record Money Given' : 'Record Money Borrowed' },
+          { label: 'All Debts', path: '/loans' },
+          { label: isLent ? 'I Paid (Friend Owes Me)' : 'Friend Paid (I Owe Friend)' },
         ]}
       />
 
@@ -127,7 +127,7 @@ export const CreateLoanPage = () => {
         </Link>
         <div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-            Record a Debt / IOU
+            Add an Expense or Debt
           </h1>
           <p className="text-xs sm:text-sm text-slate-500">
             Keep track of money shared between friends and roommates so no one ever forgets.
@@ -147,7 +147,7 @@ export const CreateLoanPage = () => {
           }`}
         >
           <ArrowUpRight className="w-4 h-4 shrink-0" />
-          <span>I Gave / Lent Money (They Owe Me)</span>
+          <span>I Paid / Gave Money (They Owe Me)</span>
         </button>
 
         <button
@@ -160,7 +160,7 @@ export const CreateLoanPage = () => {
           }`}
         >
           <ArrowDownLeft className="w-4 h-4 shrink-0" />
-          <span>I Borrowed / Took Money (I Owe Them)</span>
+          <span>Friend Paid / I Borrowed (I Owe Them)</span>
         </button>
       </div>
 
@@ -258,14 +258,14 @@ export const CreateLoanPage = () => {
 
             {/* Expected Return Date */}
             <Input
-              label="Agreed Return / Settlement Date"
+              label="Pay Back Date"
               name="dueDate"
               type="date"
               value={formData.dueDate}
               onChange={handleChange}
               required
               icon={Calendar}
-              helperText="A friendly reminder date so neither person forgets."
+              helperText="When should this be paid back? (Friendly reminder date)"
             />
 
             {/* Additional Notes */}
@@ -320,7 +320,7 @@ export const CreateLoanPage = () => {
                 fullWidthOnMobile
                 className="w-full text-sm sm:text-base py-3"
               >
-                {isLent ? 'Save Note (Friend Owes You)' : 'Save Note (You Owe Friend)'}
+                {isLent ? 'Save (Friend Owes Me)' : 'Save (I Owe Friend)'}
               </Button>
             </div>
           </form>

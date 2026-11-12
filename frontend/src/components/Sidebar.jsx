@@ -33,10 +33,10 @@ export const Sidebar = ({
     { name: 'Dashboard', path: '/', icon: LayoutDashboard },
     ...(isAuthenticated
       ? [
-        { name: 'Debts & IOUs', path: '/loans', icon: Coins },
-        { name: 'Settlements', path: '/repayments', icon: CreditCard },
+        { name: 'All Debts', path: '/loans', icon: Coins },
+        { name: 'Payments', path: '/repayments', icon: CreditCard },
         { name: 'Notifications', path: '/notifications', icon: Bell, badge: unreadCount },
-        { name: 'Find Friends', path: '/users/search', icon: Search },
+        { name: 'Friends', path: '/users/search', icon: Search },
         { name: 'My Profile', path: '/profile', icon: User },
         { name: 'Security Settings', path: '/security-settings', icon: KeyRound },
       ]

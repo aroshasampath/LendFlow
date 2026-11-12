@@ -126,13 +126,9 @@ export const SecuritySettingsPage = () => {
 
       {/* Page Header */}
       <div>
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-primaryLight text-brand-primary text-xs font-semibold uppercase tracking-wider mb-2">
-          <ShieldCheck className="w-3.5 h-3.5" />
-          Stage 4: Security & Credentials
-        </div>
         <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900">Security Settings</h1>
         <p className="text-xs sm:text-sm text-slate-500 mt-1">
-          Manage your account protection, two-factor authentication (TOTP), and password credentials.
+          Manage your account protection, two-factor authentication, and password.
         </p>
       </div>
 

@@ -122,12 +122,12 @@ export const MyLoansPage = () => {
 
   return (
     <div className="space-y-6 max-w-6xl mx-auto">
-      <Breadcrumbs items={[{ label: 'Debts & IOUs' }]} />
+      <Breadcrumbs items={[{ label: 'All Debts' }]} />
 
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900">Debts & IOUs</h1>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900">All Debts</h1>
           <p className="text-xs sm:text-sm text-slate-500 mt-1">
             Track money friends owe you, money you owe friends, and active records.
           </p>
@@ -135,7 +135,7 @@ export const MyLoansPage = () => {
 
         <Link to="/loans/create">
           <Button variant="primary" icon={Plus}>
-            + Add Debt / IOU
+            + Add Expense
           </Button>
         </Link>
       </div>
@@ -196,9 +196,9 @@ export const MyLoansPage = () => {
       ) : loans.length === 0 ? (
         <EmptyState
           icon={Coins}
-          title="No loan agreements found"
-          description="There are currently no loan records matching your selected role or status filters. You can create a new loan proposal or clear your filters."
-          actionText="Create New Loan"
+          title="No debts found"
+          description="No records found matching your filters. You can add a new expense or clear filters."
+          actionText="+ Add Expense"
           actionTo="/loans/create"
         />
       ) : (

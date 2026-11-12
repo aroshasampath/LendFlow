@@ -212,17 +212,17 @@ export const HomePage = () => {
         <div className="flex flex-wrap gap-2.5">
           <Link to="/loans/create">
             <Button variant="primary" icon={Plus}>
-              + Add IOU / Debt
+              + Add Expense
             </Button>
           </Link>
           <Link to="/repayments">
             <Button variant="secondary" icon={CreditCard}>
-              Settle Up
+              Pay / Settle Up
             </Button>
           </Link>
           <Link to="/users/search">
             <Button variant="outline" icon={Search}>
-              Find Friends
+              Friends
             </Button>
           </Link>
         </div>
@@ -243,7 +243,7 @@ export const HomePage = () => {
           <div className="space-y-2">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 text-slate-200 text-xs font-bold uppercase tracking-wider">
               <Coins className="w-3.5 h-3.5 text-brand-primaryLight" />
-              Your Total Net Balance
+              Your Balance
             </div>
 
             <div className="flex items-baseline gap-3">
@@ -260,10 +260,10 @@ export const HomePage = () => {
 
             <p className="text-xs sm:text-sm text-slate-300">
               {netBalance > 0
-                ? '🟢 Overall, friends owe you money. Collect when ready!'
+                ? '🟢 Overall, friends owe you money.'
                 : netBalance < 0
-                ? '🔴 Overall, you owe friends money. Remember to settle up!'
-                : '✨ You are all settled up with everyone! No debts pending.'}
+                ? '🔴 Overall, you owe friends money.'
+                : '✨ You are all settled up with everyone!'}
             </p>
           </div>
 
@@ -278,7 +278,7 @@ export const HomePage = () => {
                 ${(outstandingLent / 100).toFixed(2)}
               </p>
               <Link to="/loans?role=lender" className="text-[11px] text-emerald-300 hover:underline mt-1 block">
-                View who owes you &rarr;
+                Who owes you &rarr;
               </Link>
             </div>
 
@@ -291,7 +291,7 @@ export const HomePage = () => {
                 ${(outstandingBorrowed / 100).toFixed(2)}
               </p>
               <Link to="/loans?role=borrower" className="text-[11px] text-rose-300 hover:underline mt-1 block">
-                View who you owe &rarr;
+                Who you owe &rarr;
               </Link>
             </div>
           </div>
@@ -303,7 +303,7 @@ export const HomePage = () => {
         <div className="p-4 sm:p-5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-900 space-y-3 shadow-xs">
           <div className="flex items-center gap-2 font-bold text-sm text-rose-700">
             <AlertTriangle className="w-5 h-5 shrink-0" />
-            <span>Attention: You have {overdueLoans.length} debt(s) past the agreed return date!</span>
+            <span>Reminder: You have {overdueLoans.length} payment(s) past the return date!</span>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
             {overdueLoans.map((ov) => (
@@ -319,7 +319,7 @@ export const HomePage = () => {
                 </div>
                 <Link to={`/loans/${ov._id}`}>
                   <Button variant="danger" size="sm" className="text-xs py-1">
-                    Settle Up
+                    Pay Now
                   </Button>
                 </Link>
               </div>
@@ -337,7 +337,7 @@ export const HomePage = () => {
             <div className="flex items-center justify-between">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold tracking-wide uppercase bg-emerald-50 text-emerald-700 border border-emerald-100">
                 <ArrowUpRight className="w-3.5 h-3.5" />
-                Friends Owe You (To Collect)
+                Friends Owe You
               </span>
               <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
                 <Coins className="w-5 h-5" />
@@ -345,7 +345,7 @@ export const HomePage = () => {
             </div>
 
             <div>
-              <p className="text-xs font-semibold text-slate-500">Total to Collect</p>
+              <p className="text-xs font-semibold text-slate-500">You Will Get</p>
               <p className="text-3xl font-black text-slate-900 tracking-tight mt-1">
                 ${(outstandingLent / 100).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </p>
@@ -359,7 +359,7 @@ export const HomePage = () => {
                 to="/loans/create?direction=lent" 
                 className="font-bold text-emerald-700 hover:text-emerald-800 inline-flex items-center gap-1 hover:underline"
               >
-                + Record Money You Gave
+                + Add Money You Gave
                 <ArrowRight className="w-3.5 h-3.5" />
               </Link>
               <Link 
@@ -379,7 +379,7 @@ export const HomePage = () => {
             <div className="flex items-center justify-between">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold tracking-wide uppercase bg-rose-50 text-rose-700 border border-rose-100">
                 <ArrowDownLeft className="w-3.5 h-3.5" />
-                You Owe Friends (To Pay Back)
+                You Owe Friends
               </span>
               <div className="w-9 h-9 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center font-bold">
                 <CreditCard className="w-5 h-5" />
@@ -387,7 +387,7 @@ export const HomePage = () => {
             </div>
 
             <div>
-              <p className="text-xs font-semibold text-slate-500">Total to Pay Back</p>
+              <p className="text-xs font-semibold text-slate-500">You Need to Pay</p>
               <p className="text-3xl font-black text-slate-900 tracking-tight mt-1">
                 ${(outstandingBorrowed / 100).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </p>
@@ -401,7 +401,7 @@ export const HomePage = () => {
                 to="/repayments" 
                 className="font-bold text-rose-700 hover:text-rose-800 inline-flex items-center gap-1 hover:underline"
               >
-                Settle Up a Debt
+                Pay Back a Friend
                 <ArrowRight className="w-3.5 h-3.5" />
               </Link>
               <Link 
@@ -579,7 +579,7 @@ export const HomePage = () => {
           <div className="flex items-center justify-between pb-3 border-b border-slate-100">
             <h3 className="font-bold text-slate-900 text-sm flex items-center gap-2">
               <Calendar className="w-4 h-4 text-brand-primary" />
-              Agreed Return Dates
+              Upcoming Return Dates
             </h3>
             <span className="text-xs text-slate-400 font-semibold">{upcomingLoans.length}</span>
           </div>
@@ -614,7 +614,7 @@ export const HomePage = () => {
                 </div>
                 <p className="text-xs font-semibold text-slate-700">All caught up!</p>
                 <p className="text-[11px] text-slate-400">
-                  No agreed return dates due in the near future.
+                  No upcoming return dates due right now.
                 </p>
               </div>
             )}
@@ -626,7 +626,7 @@ export const HomePage = () => {
           <div className="flex items-center justify-between pb-3 border-b border-slate-100">
             <h3 className="font-bold text-slate-900 text-sm flex items-center gap-2">
               <Clock className="w-4 h-4 text-brand-primary" />
-              Recent Debts & Settlements
+              Recent Payments & Expenses
             </h3>
             <Link to="/loans" className="text-xs font-bold text-brand-primary hover:underline">
               View all &rarr;

@@ -60,7 +60,7 @@ export const RegisterPage = () => {
         </div>
         <h1 className="text-2xl font-extrabold text-slate-900">Create your Account</h1>
         <p className="text-xs sm:text-sm text-slate-500">
-          Join LendFlow to manage loans and track repayment records securely.
+          Join LendFlow to track shared expenses and debts with friends.
         </p>
       </div>
 

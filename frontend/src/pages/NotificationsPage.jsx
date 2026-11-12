@@ -57,7 +57,7 @@ export const NotificationsPage = () => {
             )}
           </div>
           <p className="text-xs sm:text-sm text-slate-500 mt-1">
-            Real-time updates regarding loan requests, approvals, and repayment receipts.
+            Instant updates about new expenses, debt confirmations, and payments.
           </p>
         </div>
 
@@ -138,7 +138,7 @@ export const NotificationsPage = () => {
         <EmptyState
           icon={Bell}
           title="No Notifications"
-          description="You're completely up to date! Real-time alerts regarding loan requests, approvals, and repayment receipts will appear here."
+          description="You're all caught up! New updates from friends will show up here."
         />
       )}
     </div>

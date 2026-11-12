@@ -78,7 +78,7 @@ export const LoginPage = () => {
         <p className="text-xs sm:text-sm text-slate-500">
           {mfaRequired
             ? 'Open your authenticator app (Google Authenticator) and enter the 6-digit code.'
-            : 'Enter your credentials to access your LendFlow dashboard.'}
+            : 'Log in to track shared expenses and debts.'}
         </p>
       </div>
 
