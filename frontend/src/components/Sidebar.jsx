@@ -15,6 +15,7 @@ import {
   LogOut,
   Search,
   User,
+  Coins,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
@@ -30,6 +31,7 @@ export const Sidebar = ({
     { name: 'Dashboard', path: '/', icon: LayoutDashboard },
     ...(isAuthenticated
       ? [
+          { name: 'Loan Agreements', path: '/loans', icon: Coins },
           { name: 'Search Members', path: '/users/search', icon: Search },
           { name: 'My Profile', path: '/profile', icon: User },
           { name: 'Security Settings', path: '/security-settings', icon: KeyRound },

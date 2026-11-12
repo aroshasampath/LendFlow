@@ -8,6 +8,7 @@ import { connectDB } from './config/db.js';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
 import authRoutes from './routes/auth.routes.js';
 import userRoutes from './routes/user.routes.js';
+import loanRoutes from './routes/loan.routes.js';
 
 // Load environment configuration
 dotenv.config();
@@ -62,6 +63,7 @@ app.get('/api/health', (req, res) => {
 // API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/loans', loanRoutes);
 
 // Root welcome status
 app.get('/', (req, res) => {

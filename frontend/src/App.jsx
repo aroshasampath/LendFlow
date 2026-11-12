@@ -16,6 +16,9 @@ import { MyProfilePage } from './pages/MyProfilePage';
 import { EditProfilePage } from './pages/EditProfilePage';
 import { UserSearchPage } from './pages/UserSearchPage';
 import { PublicProfilePage } from './pages/PublicProfilePage';
+import { MyLoansPage } from './pages/MyLoansPage';
+import { CreateLoanPage } from './pages/CreateLoanPage';
+import { LoanDetailsPage } from './pages/LoanDetailsPage';
 
 export default function App() {
   return (
@@ -63,6 +66,30 @@ export default function App() {
               element={
                 <ProtectedRoute>
                   <PublicProfilePage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/loans"
+              element={
+                <ProtectedRoute>
+                  <MyLoansPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/loans/create"
+              element={
+                <ProtectedRoute>
+                  <CreateLoanPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/loans/:id"
+              element={
+                <ProtectedRoute>
+                  <LoanDetailsPage />
                 </ProtectedRoute>
               }
             />
