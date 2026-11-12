@@ -12,6 +12,10 @@ import { LoginPage } from './pages/LoginPage';
 import { ForgotPasswordPage } from './pages/ForgotPasswordPage';
 import { ResetPasswordPage } from './pages/ResetPasswordPage';
 import { SecuritySettingsPage } from './pages/SecuritySettingsPage';
+import { MyProfilePage } from './pages/MyProfilePage';
+import { EditProfilePage } from './pages/EditProfilePage';
+import { UserSearchPage } from './pages/UserSearchPage';
+import { PublicProfilePage } from './pages/PublicProfilePage';
 
 export default function App() {
   return (
@@ -30,6 +34,38 @@ export default function App() {
             <Route path="/status" element={<StatusPage />} />
 
             {/* Protected Routes */}
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute>
+                  <MyProfilePage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/profile/edit"
+              element={
+                <ProtectedRoute>
+                  <EditProfilePage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/users/search"
+              element={
+                <ProtectedRoute>
+                  <UserSearchPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/users/:identifier"
+              element={
+                <ProtectedRoute>
+                  <PublicProfilePage />
+                </ProtectedRoute>
+              }
+            />
             <Route
               path="/security-settings"
               element={

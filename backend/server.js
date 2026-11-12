@@ -7,6 +7,7 @@ import mongoose from 'mongoose';
 import { connectDB } from './config/db.js';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
 import authRoutes from './routes/auth.routes.js';
+import userRoutes from './routes/user.routes.js';
 
 // Load environment configuration
 dotenv.config();
@@ -60,6 +61,7 @@ app.get('/api/health', (req, res) => {
 
 // API Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
 
 // Root welcome status
 app.get('/', (req, res) => {

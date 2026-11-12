@@ -13,6 +13,8 @@ import {
   KeyRound,
   LogIn,
   LogOut,
+  Search,
+  User,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
@@ -26,12 +28,16 @@ export const Sidebar = ({
 
   const navItems = [
     { name: 'Dashboard', path: '/', icon: LayoutDashboard },
+    ...(isAuthenticated
+      ? [
+          { name: 'Search Members', path: '/users/search', icon: Search },
+          { name: 'My Profile', path: '/profile', icon: User },
+          { name: 'Security Settings', path: '/security-settings', icon: KeyRound },
+        ]
+      : []),
     { name: 'Responsive QA', path: '/responsive-qa', icon: Smartphone },
     { name: 'Architecture', path: '/architecture', icon: Layers },
     { name: 'System Status', path: '/status', icon: Activity },
-    ...(isAuthenticated
-      ? [{ name: 'Security Settings', path: '/security-settings', icon: KeyRound }]
-      : []),
   ];
 
   const sidebarContent = (
@@ -93,10 +99,10 @@ export const Sidebar = ({
         <div className="p-3 m-3 rounded-xl bg-slate-800/60 border border-slate-700/60 text-xs space-y-2">
           {isAuthenticated ? (
             <div className="flex items-center justify-between">
-              <div className="truncate">
+              <NavLink to="/profile" className="truncate hover:underline">
                 <p className="font-semibold text-white truncate">{user?.fullName}</p>
                 <p className="text-[10px] text-slate-400 truncate">@{user?.username}</p>
-              </div>
+              </NavLink>
               <button
                 type="button"
                 onClick={logout}
