@@ -10,7 +10,11 @@ import {
   ChevronRight,
   X,
   Landmark,
+  KeyRound,
+  LogIn,
+  LogOut,
 } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 export const Sidebar = ({
   isOpenMobile,
@@ -18,11 +22,16 @@ export const Sidebar = ({
   isCollapsedDesktop,
   onToggleCollapseDesktop,
 }) => {
+  const { user, isAuthenticated, logout } = useAuth();
+
   const navItems = [
     { name: 'Dashboard', path: '/', icon: LayoutDashboard },
     { name: 'Responsive QA', path: '/responsive-qa', icon: Smartphone },
     { name: 'Architecture', path: '/architecture', icon: Layers },
     { name: 'System Status', path: '/status', icon: Activity },
+    ...(isAuthenticated
+      ? [{ name: 'Security Settings', path: '/security-settings', icon: KeyRound }]
+      : []),
   ];
 
   const sidebarContent = (
@@ -79,16 +88,34 @@ export const Sidebar = ({
         })}
       </nav>
 
-      {/* Security & System Info Pill */}
+      {/* User Session or Auth Call to Action */}
       {!isCollapsedDesktop && (
-        <div className="p-3 m-3 rounded-xl bg-slate-800/60 border border-slate-700/60 text-xs space-y-1.5">
-          <div className="flex items-center gap-1.5 text-emerald-400 font-medium">
-            <ShieldCheck className="w-3.5 h-3.5" />
-            <span>Secure Architecture</span>
-          </div>
-          <p className="text-[11px] text-slate-400">
-            Atlas MongoDB &bull; Stage 3 Active
-          </p>
+        <div className="p-3 m-3 rounded-xl bg-slate-800/60 border border-slate-700/60 text-xs space-y-2">
+          {isAuthenticated ? (
+            <div className="flex items-center justify-between">
+              <div className="truncate">
+                <p className="font-semibold text-white truncate">{user?.fullName}</p>
+                <p className="text-[10px] text-slate-400 truncate">@{user?.username}</p>
+              </div>
+              <button
+                type="button"
+                onClick={logout}
+                className="p-1.5 rounded-lg text-slate-400 hover:text-red-400 transition"
+                title="Log Out"
+              >
+                <LogOut className="w-4 h-4" />
+              </button>
+            </div>
+          ) : (
+            <NavLink
+              to="/login"
+              onClick={onCloseMobile}
+              className="flex items-center justify-center gap-2 py-2 px-3 rounded-lg bg-brand-primary text-white font-semibold text-xs hover:bg-brand-primaryHover transition"
+            >
+              <LogIn className="w-3.5 h-3.5" />
+              <span>Log In to Account</span>
+            </NavLink>
+          )}
         </div>
       )}
 
@@ -112,34 +139,4 @@ export const Sidebar = ({
       </div>
     </div>
   );
-
-  return (
-    <>
-      {/* 1. Desktop Fixed Sidebar */}
-      <aside
-        className={`hidden lg:block fixed inset-y-0 left-0 z-30 transition-all duration-200 border-r border-slate-800 ${
-          isCollapsedDesktop ? 'w-20' : 'w-64'
-        }`}
-      >
-        {sidebarContent}
-      </aside>
-
-      {/* 2. Mobile / Tablet Drawer */}
-      {isOpenMobile && (
-        <div className="fixed inset-0 z-50 lg:hidden">
-          {/* Overlay */}
-          <div
-            className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity"
-            onClick={onCloseMobile}
-            aria-hidden="true"
-          />
-          {/* Drawer */}
-          <div className="fixed inset-y-0 left-0 w-72 max-w-[80vw] z-50 shadow-2xl animate-in slide-in-from-left duration-200">
-            {sidebarContent}
-          </div>
-        </div>
-      )}
-    </>
-  );
 };
-
