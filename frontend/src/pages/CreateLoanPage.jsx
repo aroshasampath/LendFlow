@@ -82,8 +82,8 @@ export const CreateLoanPage = () => {
     <div className="max-w-4xl mx-auto space-y-6">
       <Breadcrumbs
         items={[
-          { label: 'Loan Agreements', path: '/loans' },
-          { label: 'Create Loan' },
+          { label: 'Loans', path: '/loans' },
+          { label: 'Propose a Loan' },
         ]}
       />
 
@@ -97,9 +97,9 @@ export const CreateLoanPage = () => {
           <ArrowLeft className="w-5 h-5" />
         </Link>
         <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900">Create Loan Agreement</h1>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Propose a Loan</h1>
           <p className="text-xs sm:text-sm text-slate-500">
-            Propose a bilateral loan request. The borrower will be notified to review and accept the terms.
+            Set up a loan for a friend or family member. They will review and confirm the terms before it starts.
           </p>
         </div>
       </div>
@@ -123,9 +123,9 @@ export const CreateLoanPage = () => {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <Input
-              label="Borrower (@username, email, or user ID)"
+              label="Who is borrowing? (@username or email)"
               name="borrowerIdentifier"
-              placeholder="e.g. @borrower_username"
+              placeholder="e.g. @john or john@example.com"
               value={formData.borrowerIdentifier}
               onChange={handleChange}
               required
@@ -135,12 +135,12 @@ export const CreateLoanPage = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Input
-                label="Loan Amount (Principal)"
+                label="Loan Amount"
                 name="amount"
                 type="number"
                 step="0.01"
                 min="1"
-                placeholder="1000.00"
+                placeholder="100.00"
                 value={formData.amount}
                 onChange={handleChange}
                 required
@@ -165,7 +165,7 @@ export const CreateLoanPage = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Input
-                label="Optional Interest Rate (%)"
+                label="Interest Rate (%)"
                 name="interestRate"
                 type="number"
                 step="0.1"
@@ -175,12 +175,12 @@ export const CreateLoanPage = () => {
                 value={formData.interestRate}
                 onChange={handleChange}
                 icon={Percent}
-                helperText="Enter 0 for interest-free loans."
+                helperText="Leave 0% for friendly, interest-free loans."
               />
 
               <div className="space-y-1.5">
                 <label className="block text-xs sm:text-sm font-semibold text-slate-700">
-                  Repayment Frequency
+                  Repayment Schedule
                 </label>
                 <select
                   name="repaymentFrequency"
@@ -191,7 +191,7 @@ export const CreateLoanPage = () => {
                   <option value="monthly">Monthly Installments</option>
                   <option value="bi-weekly">Bi-Weekly Installments</option>
                   <option value="weekly">Weekly Installments</option>
-                  <option value="one-time">One-Time Bullet Payment</option>
+                  <option value="one-time">One-Time Full Payment</option>
                 </select>
               </div>
             </div>
@@ -207,9 +207,9 @@ export const CreateLoanPage = () => {
             />
 
             <Input
-              label="Purpose / Description"
+              label="What is this loan for?"
               name="description"
-              placeholder="e.g. Business equipment purchase or emergency loan"
+              placeholder="e.g. Laptop repair, study materials, or travel expense"
               value={formData.description}
               onChange={handleChange}
               required
@@ -218,13 +218,13 @@ export const CreateLoanPage = () => {
 
             <div className="space-y-1.5">
               <label className="block text-xs sm:text-sm font-semibold text-slate-700">
-                Additional Agreement Notes (Optional)
+                Additional Notes (Optional)
               </label>
               <textarea
                 name="notes"
                 rows={2}
                 maxLength={1000}
-                placeholder="Any special repayment conditions or collateral terms..."
+                placeholder="Any special payment conditions or notes agreed upon..."
                 value={formData.notes}
                 onChange={handleChange}
                 className="w-full text-sm rounded-xl border border-slate-300 p-3 focus:outline-none focus:ring-2 focus:ring-brand-primary placeholder:text-slate-400 text-slate-900"
@@ -244,7 +244,7 @@ export const CreateLoanPage = () => {
           <div className="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-4">
             <h3 className="font-bold text-slate-900 text-sm flex items-center gap-2">
               <Coins className="w-4 h-4 text-brand-primary" />
-              Agreement Summary
+              Loan Summary
             </h3>
 
             <div className="p-4 rounded-2xl bg-brand-primaryLight/50 border border-brand-primary/20 space-y-3">
@@ -257,7 +257,7 @@ export const CreateLoanPage = () => {
 
               <div className="pt-2 border-t border-brand-primary/10 space-y-1.5 text-xs">
                 <div className="flex justify-between">
-                  <span className="text-slate-500">Principal:</span>
+                  <span className="text-slate-500">Amount:</span>
                   <span className="font-semibold text-slate-800">
                     {formData.currency} {principalNum.toLocaleString('en-US', { minimumFractionDigits: 2 })}
                   </span>
@@ -267,8 +267,8 @@ export const CreateLoanPage = () => {
                   <span className="font-semibold text-slate-800">{interestNum}%</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-500">Frequency:</span>
-                  <span className="font-semibold capitalize text-slate-800">{formData.repaymentFrequency}</span>
+                  <span className="text-slate-500">Schedule:</span>
+                  <span className="font-semibold capitalize text-slate-800">{formData.repaymentFrequency === 'one-time' ? 'One-time payment' : formData.repaymentFrequency}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-slate-500">Due Date:</span>
@@ -280,7 +280,7 @@ export const CreateLoanPage = () => {
             <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-600 flex items-start gap-2.5">
               <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
               <span>
-                Loan agreements become active only after the borrower explicitly accepts the proposal.
+                Loans only become active once the other person confirms and accepts your proposal.
               </span>
             </div>
           </div>

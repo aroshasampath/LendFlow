@@ -106,7 +106,13 @@ const startServer = async () => {
   }
 };
 
-if (process.env.NODE_ENV !== 'test') {
+// Only auto-start the server when running server.js directly (not when imported in tests)
+const isDirectRun = process.argv[1] && (
+  process.argv[1].endsWith('server.js') || 
+  process.argv[1].endsWith('server')
+);
+
+if (process.env.NODE_ENV !== 'test' && isDirectRun) {
   startServer();
 }
 
