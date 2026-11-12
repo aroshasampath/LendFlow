@@ -5,6 +5,9 @@ import { useAuth } from '../context/AuthContext';
 import { Button } from '../components/ui/Button';
 import { Badge } from '../components/ui/Badge';
 import { ResponsiveTable } from '../components/ui/ResponsiveTable';
+import { SkeletonTable } from '../components/ui/Skeleton';
+import { EmptyState } from '../components/ui/EmptyState';
+import { Breadcrumbs } from '../components/ui/Breadcrumbs';
 import { 
   Plus, 
   Coins, 
@@ -119,6 +122,8 @@ export const MyLoansPage = () => {
 
   return (
     <div className="space-y-6 max-w-6xl mx-auto">
+      <Breadcrumbs items={[{ label: 'Loan Agreements' }]} />
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -187,16 +192,20 @@ export const MyLoansPage = () => {
 
       {/* Loans Table / Cards */}
       {loading ? (
-        <div className="p-12 text-center bg-white rounded-3xl border border-slate-200 text-slate-400">
-          <div className="w-8 h-8 border-4 border-brand-primary border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
-          <p className="text-sm font-medium">Loading loan agreements...</p>
-        </div>
+        <SkeletonTable rows={5} cols={5} />
+      ) : loans.length === 0 ? (
+        <EmptyState
+          icon={Coins}
+          title="No loan agreements found"
+          description="There are currently no loan records matching your selected role or status filters. You can create a new loan proposal or clear your filters."
+          actionText="Create New Loan"
+          actionTo="/loans/create"
+        />
       ) : (
         <div className="space-y-4">
           <ResponsiveTable
             columns={columns}
             data={loans}
-            emptyMessage="No loan agreements found matching your current filter criteria."
           />
 
           {/* Pagination */}

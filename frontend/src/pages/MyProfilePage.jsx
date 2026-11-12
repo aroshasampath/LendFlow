@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Button } from '../components/ui/Button';
 import { Badge } from '../components/ui/Badge';
+import { Breadcrumbs } from '../components/ui/Breadcrumbs';
 import { 
   User, 
   Mail, 
@@ -20,6 +21,8 @@ export const MyProfilePage = () => {
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
+      <Breadcrumbs items={[{ label: 'My Profile' }]} />
+
       {/* Header & Quick Action */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>

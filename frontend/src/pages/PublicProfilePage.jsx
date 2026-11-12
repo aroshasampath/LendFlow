@@ -3,6 +3,9 @@ import { useParams, Link } from 'react-router-dom';
 import { api } from '../services/api';
 import { Button } from '../components/ui/Button';
 import { Badge } from '../components/ui/Badge';
+import { Breadcrumbs } from '../components/ui/Breadcrumbs';
+import { Skeleton, SkeletonCard } from '../components/ui/Skeleton';
+import { EmptyState } from '../components/ui/EmptyState';
 import { 
   User, 
   Calendar, 
@@ -45,39 +48,36 @@ export const PublicProfilePage = () => {
 
   if (loading) {
     return (
-      <div className="max-w-2xl mx-auto py-16 text-center space-y-3">
-        <div className="w-10 h-10 border-4 border-brand-primary border-t-transparent rounded-full animate-spin mx-auto"></div>
-        <p className="text-xs text-slate-500 font-medium">Loading profile...</p>
+      <div className="max-w-3xl mx-auto space-y-6">
+        <Skeleton className="h-4 w-48" />
+        <Skeleton className="h-32 w-full rounded-3xl" />
+        <SkeletonCard />
       </div>
     );
   }
 
   if (errorMsg || !profile) {
     return (
-      <div className="max-w-md mx-auto my-12 bg-white p-8 rounded-3xl border border-slate-200 text-center space-y-4 shadow-sm">
-        <div className="w-12 h-12 rounded-2xl bg-red-100 text-brand-danger flex items-center justify-center mx-auto">
-          <AlertCircle className="w-6 h-6" />
-        </div>
-        <h2 className="text-lg font-bold text-slate-900">User Profile Unavailable</h2>
-        <p className="text-xs sm:text-sm text-slate-500">{errorMsg || 'We could not find this user profile.'}</p>
-        <Link to="/users/search">
-          <Button variant="primary" size="sm" icon={ArrowLeft} className="mt-2">
-            Back to User Search
-          </Button>
-        </Link>
+      <div className="max-w-md mx-auto my-12">
+        <EmptyState
+          icon={User}
+          title="User Profile Unavailable"
+          description={errorMsg || 'We could not find this user profile. It may be private or removed.'}
+          actionText="Back to User Search"
+          actionTo="/users/search"
+        />
       </div>
     );
   }
 
   return (
     <div className="max-w-3xl mx-auto space-y-6">
-      <Link
-        to="/users/search"
-        className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-slate-600 hover:text-slate-900"
-      >
-        <ArrowLeft className="w-4 h-4" />
-        Back to Search Members
-      </Link>
+      <Breadcrumbs
+        items={[
+          { label: 'Search Members', path: '/users/search' },
+          { label: profile.fullName || `@${identifier}` },
+        ]}
+      />
 
       <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
         {/* Banner */}

@@ -6,6 +6,9 @@ import { Button } from '../components/ui/Button';
 import { Badge } from '../components/ui/Badge';
 import { Modal } from '../components/ui/Modal';
 import { Input } from '../components/ui/Input';
+import { Breadcrumbs } from '../components/ui/Breadcrumbs';
+import { Skeleton, SkeletonCard } from '../components/ui/Skeleton';
+import { EmptyState } from '../components/ui/EmptyState';
 import { 
   Coins, 
   User, 
@@ -112,26 +115,30 @@ export const LoanDetailsPage = () => {
 
   if (loading) {
     return (
-      <div className="max-w-4xl mx-auto py-16 text-center space-y-3">
-        <div className="w-10 h-10 border-4 border-brand-primary border-t-transparent rounded-full animate-spin mx-auto"></div>
-        <p className="text-xs text-slate-500 font-medium">Loading loan agreement...</p>
+      <div className="max-w-4xl mx-auto space-y-6">
+        <Skeleton className="h-4 w-48" />
+        <div className="flex items-center justify-between">
+          <Skeleton className="h-8 w-64" />
+          <Skeleton className="h-8 w-24" />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <SkeletonCard className="md:col-span-2" />
+          <SkeletonCard />
+        </div>
       </div>
     );
   }
 
   if (errorMsg && !loan) {
     return (
-      <div className="max-w-md mx-auto my-12 bg-white p-8 rounded-3xl border border-slate-200 text-center space-y-4 shadow-sm">
-        <div className="w-12 h-12 rounded-2xl bg-red-100 text-brand-danger flex items-center justify-center mx-auto">
-          <AlertCircle className="w-6 h-6" />
-        </div>
-        <h2 className="text-lg font-bold text-slate-900">Loan Unavailable</h2>
-        <p className="text-xs sm:text-sm text-slate-500">{errorMsg}</p>
-        <Link to="/loans">
-          <Button variant="primary" size="sm" icon={ArrowLeft} className="mt-2">
-            Back to My Loans
-          </Button>
-        </Link>
+      <div className="max-w-md mx-auto my-12">
+        <EmptyState
+          icon={AlertCircle}
+          title="Loan Unavailable"
+          description={errorMsg || 'This loan agreement could not be loaded or you do not have permission to view it.'}
+          actionText="Back to My Loans"
+          actionTo="/loans"
+        />
       </div>
     );
   }
@@ -143,6 +150,13 @@ export const LoanDetailsPage = () => {
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
+      <Breadcrumbs
+        items={[
+          { label: 'Loan Agreements', path: '/loans' },
+          { label: loan.description || 'Loan Details' },
+        ]}
+      />
+
       {/* Back button & Title */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">

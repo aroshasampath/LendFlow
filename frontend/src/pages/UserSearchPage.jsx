@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { api } from '../services/api';
 import { Input } from '../components/ui/Input';
 import { Button } from '../components/ui/Button';
+import { Breadcrumbs } from '../components/ui/Breadcrumbs';
+import { EmptyState } from '../components/ui/EmptyState';
 import { 
   Search, 
   User, 
@@ -62,6 +64,8 @@ export const UserSearchPage = () => {
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto">
+      <Breadcrumbs items={[{ label: 'Search Members' }]} />
+
       {/* Header */}
       <div>
         <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900">Search Members</h1>
@@ -200,21 +204,17 @@ export const UserSearchPage = () => {
           )}
         </div>
       ) : debouncedQuery ? (
-        <div className="p-12 text-center bg-white rounded-3xl border border-slate-200 space-y-3">
-          <div className="w-12 h-12 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto">
-            <Search className="w-6 h-6" />
-          </div>
-          <h3 className="text-base font-bold text-slate-800">No users found</h3>
-          <p className="text-xs text-slate-500 max-w-sm mx-auto">
-            We couldn&apos;t find any users matching &quot;{debouncedQuery}&quot;. Please check the username or spelling and try again.
-          </p>
-        </div>
+        <EmptyState
+          icon={Search}
+          title="No users found"
+          description={`We couldn't find any users matching "${debouncedQuery}". Please check the username or spelling and try again.`}
+        />
       ) : (
-        <div className="p-12 text-center bg-white rounded-3xl border border-slate-200 text-slate-400 space-y-2">
-          <Search className="w-8 h-8 mx-auto text-slate-300" />
-          <p className="text-sm font-medium text-slate-600">Start typing above to search for members</p>
-          <p className="text-xs text-slate-400">Search by first name, last name, @username, or full User ID</p>
-        </div>
+        <EmptyState
+          icon={Search}
+          title="Start Searching for Members"
+          description="Search by full name, @username, or unique user ID to view profiles and propose loan agreements."
+        />
       )}
     </div>
   );

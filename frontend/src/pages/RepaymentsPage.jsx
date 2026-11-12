@@ -7,6 +7,9 @@ import { Badge } from '../components/ui/Badge';
 import { Input } from '../components/ui/Input';
 import { Modal } from '../components/ui/Modal';
 import { ResponsiveTable } from '../components/ui/ResponsiveTable';
+import { SkeletonTable } from '../components/ui/Skeleton';
+import { EmptyState } from '../components/ui/EmptyState';
+import { Breadcrumbs } from '../components/ui/Breadcrumbs';
 import { 
   CreditCard, 
   ArrowUpRight, 
@@ -274,6 +277,8 @@ export const RepaymentsPage = () => {
 
   return (
     <div className="space-y-6 max-w-6xl mx-auto">
+      <Breadcrumbs items={[{ label: 'Repayments' }]} />
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -355,16 +360,20 @@ export const RepaymentsPage = () => {
 
       {/* Repayments Table / Cards */}
       {loading ? (
-        <div className="p-12 text-center bg-white rounded-3xl border border-slate-200 text-slate-400">
-          <div className="w-8 h-8 border-4 border-brand-primary border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
-          <p className="text-sm font-medium">Loading repayment records...</p>
-        </div>
+        <SkeletonTable rows={5} cols={5} />
+      ) : repayments.length === 0 ? (
+        <EmptyState
+          icon={CreditCard}
+          title="No repayments found"
+          description="There are currently no repayment records matching your selected filters. You can record a new repayment installment."
+          actionText="Submit Repayment"
+          actionOnClick={() => setSubmitModalOpen(true)}
+        />
       ) : (
         <div className="space-y-4">
           <ResponsiveTable
             columns={columns}
             data={repayments}
-            emptyMessage="No repayment records found matching your current filter criteria."
           />
 
           {/* Pagination */}

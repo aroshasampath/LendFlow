@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { api } from '../services/api';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
+import { Breadcrumbs } from '../components/ui/Breadcrumbs';
 import { User, Phone, Image, ArrowLeft, CheckCircle2, AlertCircle } from 'lucide-react';
 
 export const EditProfilePage = () => {
@@ -56,6 +57,13 @@ export const EditProfilePage = () => {
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
+      <Breadcrumbs
+        items={[
+          { label: 'My Profile', path: '/profile' },
+          { label: 'Edit Profile' },
+        ]}
+      />
+
       <div className="flex items-center gap-3">
         <Link
           to="/profile"

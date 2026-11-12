@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { useNotifications } from '../context/NotificationContext';
 import { Button } from '../components/ui/Button';
 import { Badge } from '../components/ui/Badge';
+import { Breadcrumbs } from '../components/ui/Breadcrumbs';
+import { EmptyState } from '../components/ui/EmptyState';
 import { 
   Bell, 
   CheckCheck, 
@@ -41,6 +43,8 @@ export const NotificationsPage = () => {
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
+      <Breadcrumbs items={[{ label: 'Notifications' }]} />
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -131,15 +135,11 @@ export const NotificationsPage = () => {
           ))}
         </div>
       ) : (
-        <div className="p-16 text-center bg-white rounded-3xl border border-slate-200 text-slate-400 space-y-3">
-          <div className="w-12 h-12 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto">
-            <Inbox className="w-6 h-6" />
-          </div>
-          <h3 className="text-base font-bold text-slate-800">No Notifications</h3>
-          <p className="text-xs text-slate-500">
-            You&apos;re completely up to date! Loan requests and repayment updates will appear here.
-          </p>
-        </div>
+        <EmptyState
+          icon={Bell}
+          title="No Notifications"
+          description="You're completely up to date! Real-time alerts regarding loan requests, approvals, and repayment receipts will appear here."
+        />
       )}
     </div>
   );

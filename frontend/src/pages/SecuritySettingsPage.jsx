@@ -5,6 +5,7 @@ import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { Modal } from '../components/ui/Modal';
 import { Badge } from '../components/ui/Badge';
+import { Breadcrumbs } from '../components/ui/Breadcrumbs';
 import { 
   ShieldCheck, 
   KeyRound, 
@@ -121,6 +122,8 @@ export const SecuritySettingsPage = () => {
 
   return (
     <div className="max-w-4xl mx-auto space-y-8">
+      <Breadcrumbs items={[{ label: 'Security Settings' }]} />
+
       {/* Page Header */}
       <div>
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-primaryLight text-brand-primary text-xs font-semibold uppercase tracking-wider mb-2">

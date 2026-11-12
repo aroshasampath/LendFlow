@@ -20,10 +20,16 @@ import { Input } from '../components/ui/Input';
 import { Badge } from '../components/ui/Badge';
 import { ResponsiveTable } from '../components/ui/ResponsiveTable';
 import { Modal } from '../components/ui/Modal';
+import { SkeletonCard, SkeletonTable } from '../components/ui/Skeleton';
+import { EmptyState } from '../components/ui/EmptyState';
+import { Breadcrumbs } from '../components/ui/Breadcrumbs';
+import { ConfirmModal } from '../components/ui/ConfirmModal';
+import { Card } from '../components/ui/Card';
 
 export const ResponsiveDesignShowcase = () => {
   const { width, height, breakpoint, isMobile, isTablet, isDesktop } = useViewport();
   const [modalOpen, setModalOpen] = useState(false);
+  const [confirmModalOpen, setConfirmModalOpen] = useState(false);
   const [testFormValues, setTestFormValues] = useState({
     name: 'Arosha Sampath',
     email: 'test@lendflow.io',
@@ -303,6 +309,55 @@ export const ResponsiveDesignShowcase = () => {
         </form>
       </div>
 
+      {/* Stage 9: Fintech Design System Component Showcase */}
+      <div className="space-y-6">
+        <div className="border-b border-slate-200 pb-2">
+          <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+            <Layers className="w-5 h-5 text-brand-primary" />
+            Stage 9 UI Components: Breadcrumbs, Skeletons & Empty States
+          </h2>
+          <p className="text-xs text-slate-500">
+            Standardized reusable design elements maintaining visual harmony across all viewports.
+          </p>
+        </div>
+
+        {/* 1. Breadcrumbs Demo */}
+        <div className="bg-white p-5 rounded-2xl border border-slate-200 space-y-2">
+          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Breadcrumbs Component</p>
+          <Breadcrumbs
+            items={[
+              { label: 'Fintech Hub', path: '/' },
+              { label: 'Loan Agreements', path: '/loans' },
+              { label: 'Agreement #LN-9821' },
+            ]}
+          />
+        </div>
+
+        {/* 2. Skeleton Loaders Demo */}
+        <div className="space-y-3">
+          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Skeleton Pulse Loaders (No-Jank Loading)</p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <SkeletonCard />
+            <SkeletonCard />
+            <SkeletonCard />
+          </div>
+        </div>
+
+        {/* 3. Empty State Demo */}
+        <div className="space-y-3">
+          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Empty State Component</p>
+          <EmptyState
+            icon={FileText}
+            title="Interactive Empty State Demo"
+            description="Clear, helpful guidance displayed when no financial records or loan proposals match current search criteria."
+            actionText="Sample Primary Action"
+            actionOnClick={() => alert('Empty state action clicked!')}
+            secondaryActionText="Open Confirm Dialog"
+            secondaryActionOnClick={() => setConfirmModalOpen(true)}
+          />
+        </div>
+      </div>
+
       {/* Responsive Modal / Mobile Bottom Sheet */}
       <Modal
         isOpen={modalOpen}
@@ -326,6 +381,20 @@ export const ResponsiveDesignShowcase = () => {
           </div>
         </div>
       </Modal>
+
+      {/* ConfirmModal Demo */}
+      <ConfirmModal
+        isOpen={confirmModalOpen}
+        onClose={() => setConfirmModalOpen(false)}
+        onConfirm={() => {
+          alert('Confirmed destructive action!');
+          setConfirmModalOpen(false);
+        }}
+        title="Decline Loan Proposal?"
+        message="Are you sure you want to decline this loan agreement? The borrower will be notified and this proposal will be permanently closed."
+        confirmText="Yes, Decline Proposal"
+        variant="danger"
+      />
     </div>
   );
 };

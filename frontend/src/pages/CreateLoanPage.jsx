@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { api } from '../services/api';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
+import { Breadcrumbs } from '../components/ui/Breadcrumbs';
 import { 
   Coins, 
   User, 
@@ -79,6 +80,13 @@ export const CreateLoanPage = () => {
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
+      <Breadcrumbs
+        items={[
+          { label: 'Loan Agreements', path: '/loans' },
+          { label: 'Create Loan' },
+        ]}
+      />
+
       {/* Header */}
       <div className="flex items-center gap-3">
         <Link
