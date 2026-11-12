@@ -36,10 +36,10 @@ export const Sidebar = ({
     { name: 'Dashboard', path: '/', icon: LayoutDashboard },
     ...(isAuthenticated
       ? [
-          { name: 'Loan Agreements', path: '/loans', icon: Coins },
-          { name: 'Repayments', path: '/repayments', icon: CreditCard },
+          { name: 'Debts & IOUs', path: '/loans', icon: Coins },
+          { name: 'Settlements', path: '/repayments', icon: CreditCard },
           { name: 'Notifications', path: '/notifications', icon: Bell, badge: unreadCount },
-          { name: 'Search Members', path: '/users/search', icon: Search },
+          { name: 'Find Friends', path: '/users/search', icon: Search },
           { name: 'My Profile', path: '/profile', icon: User },
           { name: 'Security Settings', path: '/security-settings', icon: KeyRound },
         ]

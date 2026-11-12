@@ -51,7 +51,7 @@ export const MyLoansPage = () => {
 
   const columns = [
     {
-      header: 'Loan Details',
+      header: 'Debt / Expense',
       key: 'description',
       render: (loan) => {
         const isLender = loan.lender?._id === user?.id || loan.lender === user?.id;
@@ -60,7 +60,7 @@ export const MyLoansPage = () => {
           <div className="flex items-center gap-3">
             <div
               className={`w-9 h-9 rounded-xl flex items-center justify-center font-bold text-xs shrink-0 ${
-                isLender ? 'bg-blue-100 text-brand-primary' : 'bg-emerald-100 text-emerald-700'
+                isLender ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'
               }`}
             >
               {isLender ? <ArrowUpRight className="w-5 h-5" /> : <ArrowDownLeft className="w-5 h-5" />}
@@ -68,7 +68,7 @@ export const MyLoansPage = () => {
             <div className="truncate max-w-[200px] sm:max-w-xs">
               <p className="font-bold text-slate-900 text-sm truncate">{loan.description}</p>
               <p className="text-xs text-slate-500 truncate">
-                {isLender ? 'Borrower:' : 'Lender:'} {otherParty?.fullName || 'Member'} (@{otherParty?.username})
+                {isLender ? 'Owed by:' : 'Owed to:'} {otherParty?.fullName || 'Friend'} (@{otherParty?.username})
               </p>
             </div>
           </div>
@@ -76,7 +76,7 @@ export const MyLoansPage = () => {
       },
     },
     {
-      header: 'Principal',
+      header: 'Total Amount',
       key: 'amount',
       render: (loan) => (
         <span className="font-semibold text-slate-800">
@@ -85,7 +85,7 @@ export const MyLoansPage = () => {
       ),
     },
     {
-      header: 'Balance Remaining',
+      header: 'Balance Left',
       key: 'remainingBalance',
       render: (loan) => (
         <span className="font-bold text-brand-primary">
@@ -94,7 +94,7 @@ export const MyLoansPage = () => {
       ),
     },
     {
-      header: 'Due Date',
+      header: 'Return Date',
       key: 'dueDate',
       render: (loan) => new Date(loan.dueDate).toLocaleDateString(),
     },
@@ -103,7 +103,7 @@ export const MyLoansPage = () => {
       key: 'status',
       render: (loan) => (
         <Badge status={loan.status}>
-          {loan.status.charAt(0).toUpperCase() + loan.status.slice(1)}
+          {loan.status === 'completed' ? 'Settled' : loan.status.charAt(0).toUpperCase() + loan.status.slice(1)}
         </Badge>
       ),
     },
@@ -113,7 +113,7 @@ export const MyLoansPage = () => {
       render: (loan) => (
         <Link to={`/loans/${loan._id}`}>
           <Button size="sm" variant="outline" className="text-xs py-1">
-            Details
+            View / Settle
           </Button>
         </Link>
       ),
@@ -122,20 +122,20 @@ export const MyLoansPage = () => {
 
   return (
     <div className="space-y-6 max-w-6xl mx-auto">
-      <Breadcrumbs items={[{ label: 'Loan Agreements' }]} />
+      <Breadcrumbs items={[{ label: 'Debts & IOUs' }]} />
 
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900">Loan Agreements</h1>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900">Debts & IOUs</h1>
           <p className="text-xs sm:text-sm text-slate-500 mt-1">
-            Track all active, pending, and completed lending agreements across bilateral roles.
+            Track money friends owe you, money you owe friends, and active records.
           </p>
         </div>
 
         <Link to="/loans/create">
           <Button variant="primary" icon={Plus}>
-            New Loan Proposal
+            + Add Debt / IOU
           </Button>
         </Link>
       </div>
@@ -143,9 +143,9 @@ export const MyLoansPage = () => {
       {/* Role Tabs */}
       <div className="flex border-b border-slate-200 gap-6 text-sm font-semibold">
         {[
-          { key: 'all', label: 'All Agreements' },
-          { key: 'lender', label: 'Money Lent (Lender)' },
-          { key: 'borrower', label: 'Money Borrowed (Borrower)' },
+          { key: 'all', label: 'All Debts' },
+          { key: 'lender', label: '🟢 Friends Owe Me' },
+          { key: 'borrower', label: '🔴 I Owe Friends' },
         ].map((tab) => (
           <button
             key={tab.key}

@@ -48,7 +48,10 @@ export const submitRepayment = async (req, res, next) => {
       });
     }
 
-    if (!loan.borrower.equals(req.user._id)) {
+    const isBorrower = loan.borrower.equals(req.user._id);
+    const isLender = loan.lender.equals(req.user._id);
+
+    if (!isBorrower && !isLender) {
       return res.status(403).json({
         success: false,
         message: 'You do not have permission to perform this action.',
@@ -79,6 +82,64 @@ export const submitRepayment = async (req, res, next) => {
       });
     }
 
+    if (isLender) {
+      // Lender directly recording received cash/settlement
+      const repayment = new Repayment({
+        loan: loan._id,
+        borrower: loan.borrower,
+        lender: req.user._id,
+        amount: amountInMinorUnits,
+        currency: loan.currency,
+        paymentDate: new Date(paymentDate),
+        paymentReference: paymentReference ? paymentReference.trim() : 'Direct Settlement',
+        notes: notes ? notes.trim() : '',
+        status: 'confirmed',
+        confirmedAt: new Date(),
+        idempotencyKey: idempotencyKey.trim(),
+      });
+
+      await repayment.save();
+
+      const previousBalance = loan.remainingBalance;
+      const deduction = Math.min(repayment.amount, loan.remainingBalance);
+      const newBalance = previousBalance - deduction;
+
+      loan.remainingBalance = newBalance;
+      loan.totalRepaid += deduction;
+
+      if (newBalance === 0) {
+        loan.status = 'completed';
+      }
+
+      loan.timeline.push({
+        action: 'repayment_confirmed',
+        performedBy: req.user._id,
+        timestamp: new Date(),
+        note: `Payment of ${formatCurrency(amountInMinorUnits, loan.currency)} recorded as received by ${req.user.fullName}.`,
+      });
+      await loan.save();
+
+      // Notify Borrower
+      await sendNotification({
+        recipient: loan.borrower,
+        sender: req.user._id,
+        type: 'repayment_confirmed',
+        title: 'Settlement Confirmed Received',
+        message: `${req.user.fullName} confirmed receipt of ${formatCurrency(amountInMinorUnits, loan.currency)} for "${loan.description}". Remaining: ${formatCurrency(newBalance, loan.currency)}.`,
+        link: `/loans/${loan._id}`,
+        metadata: { loanId: loan._id, repaymentId: repayment._id, amount: amountInMinorUnits },
+      });
+
+      return res.status(201).json({
+        success: true,
+        message: 'Settlement recorded and balance updated.',
+        data: {
+          repayment,
+        },
+      });
+    }
+
+    // Default: Borrower submitting for lender confirmation
     const repayment = new Repayment({
       loan: loan._id,
       borrower: req.user._id,

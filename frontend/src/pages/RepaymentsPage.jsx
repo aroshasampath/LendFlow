@@ -85,10 +85,10 @@ export const RepaymentsPage = () => {
     }
   };
 
-  // Fetch borrower's active loans for modal dropdown
+  // Fetch active loans for modal dropdown (both as lender and borrower)
   const fetchActiveLoans = async () => {
     try {
-      const res = await api.get('/loans?role=borrower&status=active&limit=50');
+      const res = await api.get('/loans?role=all&status=active&limit=50');
       setActiveLoans(res.data.loans || []);
     } catch {
       // Ignore background fetch failure
@@ -282,9 +282,9 @@ export const RepaymentsPage = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900">Repayment Records</h1>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900">Settlements & Repayments</h1>
           <p className="text-xs sm:text-sm text-slate-500 mt-1">
-            Submit loan installments, verify receipts, and monitor financial balances.
+            Record payments when debts are settled. Both sides stay verified with zero confusion.
           </p>
         </div>
 
@@ -293,7 +293,7 @@ export const RepaymentsPage = () => {
           icon={Plus}
           onClick={() => setSubmitModalOpen(true)}
         >
-          Submit Repayment
+          + Record Settlement
         </Button>
       </div>
 
@@ -301,9 +301,9 @@ export const RepaymentsPage = () => {
       {!loanIdFromUrl && (
         <div className="flex border-b border-slate-200 gap-6 text-sm font-semibold">
           {[
-            { key: 'all', label: 'All Repayments' },
-            { key: 'lender', label: 'Incoming to Confirm (Lender)' },
-            { key: 'borrower', label: 'Outgoing Submitted (Borrower)' },
+            { key: 'all', label: 'All Settlements' },
+            { key: 'lender', label: '🟢 Incoming to Confirm' },
+            { key: 'borrower', label: '🔴 Outgoing Payments' },
           ].map((tab) => (
             <button
               key={tab.key}
@@ -426,11 +426,15 @@ export const RepaymentsPage = () => {
               className="w-full text-sm rounded-xl border border-slate-300 bg-white text-slate-900 px-3.5 py-2.5 min-h-[44px] focus:outline-none focus:ring-2 focus:ring-brand-primary"
             >
               <option value="">-- Choose active loan --</option>
-              {activeLoans.map((l) => (
-                <option key={l._id} value={l._id}>
-                  {l.description} - Remaining: {l.currency} {(l.remainingBalance / 100).toFixed(2)}
-                </option>
-              ))}
+              {activeLoans.map((l) => {
+                const isLender = l.lender?._id === user?.id || l.lender === user?.id;
+                const otherParty = isLender ? l.borrower : l.lender;
+                return (
+                  <option key={l._id} value={l._id}>
+                    {l.description} ({isLender ? `${otherParty?.fullName} owes you` : `You owe ${otherParty?.fullName}`}) - {l.currency} {(l.remainingBalance / 100).toFixed(2)}
+                  </option>
+                );
+              })}
             </select>
           </div>
 

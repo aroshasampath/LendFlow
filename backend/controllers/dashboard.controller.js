@@ -218,6 +218,7 @@ export const getDashboardSummary = async (req, res, next) => {
           totalBorrowed,
           outstandingLent,
           outstandingBorrowed,
+          netBalance: outstandingLent - outstandingBorrowed,
           activeLoans: activeLoansCount,
           completedLoans: completedLoansCount,
           overdueLoansCount: overdueLoans.length,

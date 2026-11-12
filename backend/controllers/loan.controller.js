@@ -13,6 +13,8 @@ export const createLoan = async (req, res, next) => {
   try {
     const {
       borrowerIdentifier,
+      friendIdentifier,
+      direction = 'lent', // 'lent' (default: I gave money, they owe me) OR 'borrowed' (I took money, I owe them)
       amount,
       currency,
       interestRate,
@@ -22,8 +24,10 @@ export const createLoan = async (req, res, next) => {
       notes,
     } = req.body;
 
+    const targetIdentifier = friendIdentifier || borrowerIdentifier;
+
     const validation = validateLoanCreation({
-      borrowerIdentifier,
+      borrowerIdentifier: targetIdentifier,
       amount,
       currency,
       dueDate,
@@ -35,36 +39,40 @@ export const createLoan = async (req, res, next) => {
       return res.status(400).json({ success: false, message: validation.error });
     }
 
-    let borrowerFilter = {};
-    if (mongoose.Types.ObjectId.isValid(borrowerIdentifier)) {
-      borrowerFilter = { _id: borrowerIdentifier };
+    let friendFilter = {};
+    if (mongoose.Types.ObjectId.isValid(targetIdentifier)) {
+      friendFilter = { _id: targetIdentifier };
     } else {
-      const cleanIdent = borrowerIdentifier.toLowerCase().trim();
-      borrowerFilter = {
+      const cleanIdent = targetIdentifier.toLowerCase().trim();
+      friendFilter = {
         $or: [{ username: cleanIdent }, { email: cleanIdent }],
       };
     }
 
-    const borrower = await User.findOne(borrowerFilter);
-    if (!borrower) {
+    const counterparty = await User.findOne(friendFilter);
+    if (!counterparty) {
       return res.status(404).json({
         success: false,
-        message: 'The specified borrower could not be found. Please check the username or email.',
+        message: 'The specified friend or member could not be found. Please check the username or email.',
       });
     }
 
-    if (borrower._id.equals(req.user._id)) {
+    if (counterparty._id.equals(req.user._id)) {
       return res.status(400).json({
         success: false,
-        message: 'You cannot create a loan agreement with yourself as the borrower.',
+        message: 'You cannot create a debt record with yourself.',
       });
     }
 
     const amountInMinorUnits = toMinorUnits(amount);
 
+    const isBorrowed = direction === 'borrowed';
+    const lenderId = isBorrowed ? counterparty._id : req.user._id;
+    const borrowerId = isBorrowed ? req.user._id : counterparty._id;
+
     const loan = new Loan({
-      lender: req.user._id,
-      borrower: borrower._id,
+      lender: lenderId,
+      borrower: borrowerId,
       amount: amountInMinorUnits,
       currency: (currency || 'USD').toUpperCase(),
       interestRate: parseFloat(interestRate) || 0,
@@ -80,20 +88,24 @@ export const createLoan = async (req, res, next) => {
           action: 'created',
           performedBy: req.user._id,
           timestamp: new Date(),
-          note: `Loan proposal created by lender for ${borrower.fullName}.`,
+          note: isBorrowed
+            ? `Debt record created by ${req.user.fullName} owing to ${counterparty.fullName}.`
+            : `Debt record created by ${req.user.fullName} owed by ${counterparty.fullName}.`,
         },
       ],
     });
 
     await loan.save();
 
-    // Send Notification to Borrower
+    // Send Notification to Counterparty
     await sendNotification({
-      recipient: borrower._id,
+      recipient: counterparty._id,
       sender: req.user._id,
       type: 'loan_request',
-      title: 'New Loan Proposal Received',
-      message: `${req.user.fullName} proposed a loan agreement of ${formatCurrency(amountInMinorUnits, loan.currency)} for: "${loan.description}".`,
+      title: isBorrowed ? 'New Debt Acknowledgment' : 'New Debt / IOU Record',
+      message: isBorrowed
+        ? `${req.user.fullName} recorded that they owe you ${formatCurrency(amountInMinorUnits, loan.currency)} for: "${loan.description}".`
+        : `${req.user.fullName} recorded that you owe them ${formatCurrency(amountInMinorUnits, loan.currency)} for: "${loan.description}".`,
       link: `/loans/${loan._id}`,
       metadata: { loanId: loan._id, amount: amountInMinorUnits },
     });
@@ -274,10 +286,17 @@ export const respondToLoanRequest = async (req, res, next) => {
       });
     }
 
-    if (!loan.borrower.equals(req.user._id)) {
+    const isBorrower = loan.borrower.equals(req.user._id);
+    const isLender = loan.lender.equals(req.user._id);
+    const creatorId = loan.timeline?.[0]?.performedBy;
+
+    // The respondent must be a participant who did NOT create this record
+    const isRecipient = (isBorrower || isLender) && (!creatorId || !creatorId.equals(req.user._id));
+
+    if (!isRecipient) {
       return res.status(403).json({
         success: false,
-        message: 'Only the intended borrower can accept or reject this loan request.',
+        message: 'Only the recipient of this debt request can accept or decline it.',
       });
     }
 
@@ -288,57 +307,59 @@ export const respondToLoanRequest = async (req, res, next) => {
       });
     }
 
+    const otherPartyId = isBorrower ? loan.lender : loan.borrower;
+
     if (action === 'accept') {
       loan.status = 'active';
       loan.timeline.push({
         action: 'accepted',
         performedBy: req.user._id,
         timestamp: new Date(),
-        note: 'Loan proposal accepted by borrower. Agreement is now active.',
+        note: `Debt record confirmed by ${req.user.fullName}. Now active.`,
       });
       await loan.save();
 
-      // Notify Lender
+      // Notify the creator
       await sendNotification({
-        recipient: loan.lender,
+        recipient: otherPartyId,
         sender: req.user._id,
         type: 'loan_accepted',
-        title: 'Loan Agreement Accepted',
-        message: `${req.user.fullName} accepted the loan terms for "${loan.description}". The agreement is now active.`,
+        title: 'Debt Record Confirmed',
+        message: `${req.user.fullName} confirmed the debt record of ${formatCurrency(loan.amount, loan.currency)} for "${loan.description}".`,
         link: `/loans/${loan._id}`,
-        metadata: { loanId: loan._id },
+        metadata: { loanId: loan._id, status: 'active' },
       });
 
       return res.status(200).json({
         success: true,
-        message: 'You have accepted the loan agreement.',
+        message: 'You have confirmed this debt record.',
         data: { loan },
       });
     } else {
       loan.status = 'rejected';
-      loan.rejectionReason = rejectionReason ? rejectionReason.trim() : 'Declined by borrower.';
+      loan.rejectionReason = rejectionReason ? rejectionReason.trim() : 'Declined by recipient.';
       loan.timeline.push({
         action: 'rejected',
         performedBy: req.user._id,
         timestamp: new Date(),
-        note: `Loan proposal rejected by borrower: ${loan.rejectionReason}`,
+        note: `Debt record declined: ${loan.rejectionReason}`,
       });
       await loan.save();
 
-      // Notify Lender
+      // Notify the creator
       await sendNotification({
-        recipient: loan.lender,
+        recipient: otherPartyId,
         sender: req.user._id,
         type: 'loan_rejected',
-        title: 'Loan Agreement Declined',
-        message: `${req.user.fullName} declined the loan proposal for "${loan.description}".`,
+        title: 'Debt Record Declined',
+        message: `${req.user.fullName} declined the debt record for "${loan.description}".`,
         link: `/loans/${loan._id}`,
         metadata: { loanId: loan._id, reason: loan.rejectionReason },
       });
 
       return res.status(200).json({
         success: true,
-        message: 'You have rejected the loan agreement.',
+        message: 'You have declined this debt record.',
         data: { loan },
       });
     }

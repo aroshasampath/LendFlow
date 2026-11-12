@@ -9,7 +9,6 @@ import {
   Coins, 
   ArrowUpRight, 
   ArrowDownLeft, 
-  TrendingUp, 
   CheckCircle2, 
   AlertTriangle, 
   Calendar, 
@@ -19,10 +18,11 @@ import {
   ArrowRight,
   ShieldCheck, 
   Clock, 
-  Layers,
   Sparkles,
-  UserCheck,
-  Check
+  Users,
+  Check,
+  TrendingUp,
+  Tag
 } from 'lucide-react';
 import {
   AreaChart,
@@ -42,7 +42,7 @@ export const HomePage = () => {
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState('');
-  const [activeChartTab, setActiveChartTab] = useState('trends'); // 'trends' | 'repayments'
+  const [activeChartTab, setActiveChartTab] = useState('trends');
 
   const fetchSummary = async () => {
     if (!isAuthenticated) return;
@@ -76,22 +76,22 @@ export const HomePage = () => {
 
           <div className="max-w-3xl space-y-5 relative z-10">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-primary/20 text-brand-primaryLight border border-brand-primary/30 text-xs font-semibold tracking-wide uppercase">
-              <ShieldCheck className="w-3.5 h-3.5" />
-              LendFlow Personal Loans
+              <Users className="w-3.5 h-3.5" />
+              Shared Debts & Roommate Money Tracker
             </div>
 
             <h1 className="text-3xl sm:text-5xl font-black tracking-tight leading-tight">
-              Simple, Safe & Transparent <span className="text-brand-primaryLight">Peer-to-Peer</span> Loan Tracking
+              Never Forget Who Owes Who Between <span className="text-brand-primaryLight">Friends & Roommates</span>
             </h1>
 
             <p className="text-slate-300 text-sm sm:text-base lg:text-lg leading-relaxed">
-              Track money you lend to friends or borrow from family with clear terms, automated payment reminders, and exact zero-error calculations.
+              Living with friends or batchmates? Easily track shared food bills, room rent, Wi-Fi, and cash loans. When someone pays, both sides stay notified and in complete sync.
             </p>
 
             <div className="pt-3 flex flex-wrap gap-3.5">
               <Link to="/register">
                 <Button variant="primary" size="lg" icon={Plus}>
-                  Get Started Free
+                  Create Free Account
                 </Button>
               </Link>
               <Link to="/login">
@@ -107,11 +107,11 @@ export const HomePage = () => {
         <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-2">
             <div className="w-10 h-10 rounded-xl bg-blue-50 text-brand-primary flex items-center justify-center font-bold">
-              <Coins className="w-5 h-5" />
+              <Users className="w-5 h-5" />
             </div>
-            <h3 className="font-bold text-slate-900 text-base">Lend & Borrow</h3>
+            <h3 className="font-bold text-slate-900 text-base">Friend & Hostel Debts</h3>
             <p className="text-xs text-slate-500 leading-relaxed">
-              Easily manage money you lend out and money you owe with separate, crystal-clear records.
+              Record who paid for dinner, groceries, or rent so nobody has to awkwardly ask for money back.
             </p>
           </div>
 
@@ -119,9 +119,9 @@ export const HomePage = () => {
             <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
               <ShieldCheck className="w-5 h-5" />
             </div>
-            <h3 className="font-bold text-slate-900 text-base">Accurate to the Cent</h3>
+            <h3 className="font-bold text-slate-900 text-base">Instant Notifications</h3>
             <p className="text-xs text-slate-500 leading-relaxed">
-              Stores all financial values in exact cents, completely preventing rounding and balance errors.
+              When a note or payment is recorded, the other person receives a notification and sees it on their screen.
             </p>
           </div>
 
@@ -129,19 +129,19 @@ export const HomePage = () => {
             <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold">
               <CreditCard className="w-5 h-5" />
             </div>
-            <h3 className="font-bold text-slate-900 text-base">Verified Repayments</h3>
+            <h3 className="font-bold text-slate-900 text-base">Clear Settlements</h3>
             <p className="text-xs text-slate-500 leading-relaxed">
-              Borrowers record payments and lenders confirm them, keeping both sides in complete agreement.
+              Settle up in cash or online transfer. Both friends confirm so everyone is 100% on the same page.
             </p>
           </div>
 
           <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-2">
             <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center font-bold">
-              <Layers className="w-5 h-5" />
+              <Coins className="w-5 h-5" />
             </div>
-            <h3 className="font-bold text-slate-900 text-base">Easy on Any Device</h3>
+            <h3 className="font-bold text-slate-900 text-base">Net Balance at a Glance</h3>
             <p className="text-xs text-slate-500 leading-relaxed">
-              Designed from the ground up for phones, tablets, and desktop screens with friendly touch controls.
+              See your overall position instantly: how much friends owe you vs how much you owe friends.
             </p>
           </div>
         </section>
@@ -164,15 +164,11 @@ export const HomePage = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          <SkeletonCard />
-          <SkeletonCard />
-          <SkeletonCard />
-        </div>
+        <Skeleton className="h-32 w-full rounded-3xl" />
 
-        <div className="bg-white rounded-3xl p-6 border border-slate-100 h-64 space-y-4">
-          <Skeleton className="h-6 w-48" />
-          <Skeleton className="h-44 w-full rounded-2xl" />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <SkeletonCard />
+          <SkeletonCard />
         </div>
       </div>
     );
@@ -186,7 +182,10 @@ export const HomePage = () => {
   const recentLoans = dashboardData?.recentActivity?.loans || [];
   const recentRepayments = dashboardData?.recentActivity?.repayments || [];
 
-  // Determine if there is any loan/repayment activity yet
+  const outstandingLent = cards.outstandingLent || 0;
+  const outstandingBorrowed = cards.outstandingBorrowed || 0;
+  const netBalance = cards.netBalance ?? (outstandingLent - outstandingBorrowed);
+
   const hasActivity = 
     (cards.totalLent || 0) > 0 || 
     (cards.totalBorrowed || 0) > 0 || 
@@ -194,7 +193,6 @@ export const HomePage = () => {
     recentLoans.length > 0 || 
     recentRepayments.length > 0;
 
-  // Check if charts have non-zero historical points
   const hasChartData = charts.some(c => (c.lent || 0) > 0 || (c.borrowed || 0) > 0 || (c.repaid || 0) > 0);
 
   return (
@@ -207,24 +205,24 @@ export const HomePage = () => {
             <span className="text-xl sm:text-2xl">👋</span>
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 mt-1">
-            Track money you've lent, money you owe, and upcoming payments easily.
+            Track money between roommates and friends, settle up easily, and keep balances clear.
           </p>
         </div>
 
         <div className="flex flex-wrap gap-2.5">
           <Link to="/loans/create">
             <Button variant="primary" icon={Plus}>
-              Propose a Loan
+              + Add IOU / Debt
             </Button>
           </Link>
           <Link to="/repayments">
             <Button variant="secondary" icon={CreditCard}>
-              Repayments
+              Settle Up
             </Button>
           </Link>
           <Link to="/users/search">
             <Button variant="outline" icon={Search}>
-              Find Members
+              Find Friends
             </Button>
           </Link>
         </div>
@@ -237,12 +235,75 @@ export const HomePage = () => {
         </div>
       )}
 
-      {/* Urgent Overdue Loans Alert Banner (if any) */}
+      {/* UNIQUE MODERN NET BALANCE HERO CARD */}
+      <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-950 text-white rounded-3xl p-6 sm:p-8 shadow-xl relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-80 h-80 bg-brand-primary/20 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="space-y-2">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 text-slate-200 text-xs font-bold uppercase tracking-wider">
+              <Coins className="w-3.5 h-3.5 text-brand-primaryLight" />
+              Your Total Net Balance
+            </div>
+
+            <div className="flex items-baseline gap-3">
+              <p className={`text-3xl sm:text-5xl font-black tracking-tight ${
+                netBalance > 0 
+                  ? 'text-emerald-400' 
+                  : netBalance < 0 
+                  ? 'text-rose-400' 
+                  : 'text-white'
+              }`}>
+                {netBalance > 0 ? `+$${(netBalance / 100).toFixed(2)}` : netBalance < 0 ? `-$${(Math.abs(netBalance) / 100).toFixed(2)}` : '$0.00'}
+              </p>
+            </div>
+
+            <p className="text-xs sm:text-sm text-slate-300">
+              {netBalance > 0
+                ? '🟢 Overall, friends owe you money. Collect when ready!'
+                : netBalance < 0
+                ? '🔴 Overall, you owe friends money. Remember to settle up!'
+                : '✨ You are all settled up with everyone! No debts pending.'}
+            </p>
+          </div>
+
+          {/* Quick Breakdown Pills */}
+          <div className="flex flex-col sm:flex-row gap-3">
+            <div className="bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/10 min-w-[160px]">
+              <span className="text-[11px] font-semibold text-emerald-300 uppercase tracking-wide flex items-center gap-1">
+                <ArrowUpRight className="w-3.5 h-3.5" />
+                Friends Owe You
+              </span>
+              <p className="text-xl font-black text-white mt-1">
+                ${(outstandingLent / 100).toFixed(2)}
+              </p>
+              <Link to="/loans?role=lender" className="text-[11px] text-emerald-300 hover:underline mt-1 block">
+                View who owes you &rarr;
+              </Link>
+            </div>
+
+            <div className="bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/10 min-w-[160px]">
+              <span className="text-[11px] font-semibold text-rose-300 uppercase tracking-wide flex items-center gap-1">
+                <ArrowDownLeft className="w-3.5 h-3.5" />
+                You Owe Friends
+              </span>
+              <p className="text-xl font-black text-white mt-1">
+                ${(outstandingBorrowed / 100).toFixed(2)}
+              </p>
+              <Link to="/loans?role=borrower" className="text-[11px] text-rose-300 hover:underline mt-1 block">
+                View who you owe &rarr;
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Urgent Overdue Reminders (if any) */}
       {overdueLoans.length > 0 && (
         <div className="p-4 sm:p-5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-900 space-y-3 shadow-xs">
           <div className="flex items-center gap-2 font-bold text-sm text-rose-700">
             <AlertTriangle className="w-5 h-5 shrink-0" />
-            <span>Attention: You have {overdueLoans.length} loan payment(s) past due date!</span>
+            <span>Attention: You have {overdueLoans.length} debt(s) past the agreed return date!</span>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
             {overdueLoans.map((ov) => (
@@ -258,7 +319,7 @@ export const HomePage = () => {
                 </div>
                 <Link to={`/loans/${ov._id}`}>
                   <Button variant="danger" size="sm" className="text-xs py-1">
-                    Resolve
+                    Settle Up
                   </Button>
                 </Link>
               </div>
@@ -267,16 +328,16 @@ export const HomePage = () => {
         </div>
       )}
 
-      {/* 3 Main Financial Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-        {/* Card 1: Money You Lent (To Collect) */}
+      {/* 2 HIGH-IMPACT ACTIVE DEBT CARDS */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        {/* Card 1: Money Friends Owe You */}
         <div className="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
           <div className="absolute top-0 right-0 w-28 h-28 bg-emerald-50 rounded-full blur-2xl -mr-8 -mt-8 pointer-events-none group-hover:scale-110 transition-transform"></div>
           <div className="relative z-10 flex flex-col justify-between h-full space-y-4">
             <div className="flex items-center justify-between">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold tracking-wide uppercase bg-emerald-50 text-emerald-700 border border-emerald-100">
                 <ArrowUpRight className="w-3.5 h-3.5" />
-                Money You Lent
+                Friends Owe You (To Collect)
               </span>
               <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
                 <Coins className="w-5 h-5" />
@@ -284,126 +345,90 @@ export const HomePage = () => {
             </div>
 
             <div>
-              <p className="text-xs font-semibold text-slate-500">To Collect / Receive</p>
+              <p className="text-xs font-semibold text-slate-500">Total to Collect</p>
               <p className="text-3xl font-black text-slate-900 tracking-tight mt-1">
-                ${((cards.outstandingLent || 0) / 100).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                ${(outstandingLent / 100).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </p>
               <p className="text-xs text-slate-400 mt-1">
-                Total lent: <span className="font-semibold text-slate-600">${((cards.totalLent || 0) / 100).toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
+                Money you paid for food, bills, or lent to friends.
               </p>
             </div>
 
             <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
               <Link 
-                to="/loans?role=lender" 
+                to="/loans/create?direction=lent" 
                 className="font-bold text-emerald-700 hover:text-emerald-800 inline-flex items-center gap-1 hover:underline"
               >
-                View Lent Loans
+                + Record Money You Gave
                 <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+              <Link 
+                to="/loans?role=lender" 
+                className="text-slate-500 hover:text-slate-800"
+              >
+                View all &rarr;
               </Link>
             </div>
           </div>
         </div>
 
-        {/* Card 2: Money You Borrowed (To Pay Back) */}
+        {/* Card 2: Money You Owe Friends */}
         <div className="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
-          <div className="absolute top-0 right-0 w-28 h-28 bg-amber-50 rounded-full blur-2xl -mr-8 -mt-8 pointer-events-none group-hover:scale-110 transition-transform"></div>
+          <div className="absolute top-0 right-0 w-28 h-28 bg-rose-50 rounded-full blur-2xl -mr-8 -mt-8 pointer-events-none group-hover:scale-110 transition-transform"></div>
           <div className="relative z-10 flex flex-col justify-between h-full space-y-4">
             <div className="flex items-center justify-between">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold tracking-wide uppercase bg-amber-50 text-amber-700 border border-amber-100">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold tracking-wide uppercase bg-rose-50 text-rose-700 border border-rose-100">
                 <ArrowDownLeft className="w-3.5 h-3.5" />
-                Money You Owe
+                You Owe Friends (To Pay Back)
               </span>
-              <div className="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold">
+              <div className="w-9 h-9 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center font-bold">
                 <CreditCard className="w-5 h-5" />
               </div>
             </div>
 
             <div>
-              <p className="text-xs font-semibold text-slate-500">To Pay Back</p>
+              <p className="text-xs font-semibold text-slate-500">Total to Pay Back</p>
               <p className="text-3xl font-black text-slate-900 tracking-tight mt-1">
-                ${((cards.outstandingBorrowed || 0) / 100).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                ${(outstandingBorrowed / 100).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </p>
               <p className="text-xs text-slate-400 mt-1">
-                Total borrowed: <span className="font-semibold text-slate-600">${((cards.totalBorrowed || 0) / 100).toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
+                Money friends paid for you or you borrowed.
               </p>
             </div>
 
             <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
               <Link 
-                to="/loans?role=borrower" 
-                className="font-bold text-amber-700 hover:text-amber-800 inline-flex items-center gap-1 hover:underline"
+                to="/repayments" 
+                className="font-bold text-rose-700 hover:text-rose-800 inline-flex items-center gap-1 hover:underline"
               >
-                View Borrowed Loans
+                Settle Up a Debt
                 <ArrowRight className="w-3.5 h-3.5" />
               </Link>
-            </div>
-          </div>
-        </div>
-
-        {/* Card 3: Loan Status & Overview */}
-        <div className="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
-          <div className="absolute top-0 right-0 w-28 h-28 bg-blue-50 rounded-full blur-2xl -mr-8 -mt-8 pointer-events-none group-hover:scale-110 transition-transform"></div>
-          <div className="relative z-10 flex flex-col justify-between h-full space-y-4">
-            <div className="flex items-center justify-between">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold tracking-wide uppercase bg-blue-50 text-brand-primary border border-blue-100">
-                <Layers className="w-3.5 h-3.5" />
-                Loans Summary
-              </span>
-              <div className="w-9 h-9 rounded-xl bg-blue-50 text-brand-primary flex items-center justify-center font-bold">
-                <CheckCircle2 className="w-5 h-5" />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3 pt-1">
-              <div className="p-3 rounded-2xl bg-slate-50 border border-slate-100">
-                <span className="text-[11px] font-semibold text-slate-500 uppercase">Active</span>
-                <p className="text-2xl font-black text-slate-900 mt-0.5">{cards.activeLoans || 0}</p>
-              </div>
-              <div className="p-3 rounded-2xl bg-slate-50 border border-slate-100">
-                <span className="text-[11px] font-semibold text-slate-500 uppercase">Completed</span>
-                <p className="text-2xl font-black text-emerald-700 mt-0.5">{cards.completedLoans || 0}</p>
-              </div>
-            </div>
-
-            <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
-              {overdueLoans.length > 0 ? (
-                <span className="text-xs font-bold text-rose-600 flex items-center gap-1">
-                  <AlertTriangle className="w-3.5 h-3.5" />
-                  {overdueLoans.length} Overdue
-                </span>
-              ) : (
-                <span className="text-xs text-slate-500 flex items-center gap-1">
-                  <Check className="w-3.5 h-3.5 text-emerald-600" />
-                  All on track
-                </span>
-              )}
               <Link 
-                to="/loans" 
-                className="font-bold text-brand-primary hover:text-brand-primaryDark inline-flex items-center gap-1 hover:underline"
+                to="/loans?role=borrower" 
+                className="text-slate-500 hover:text-slate-800"
               >
-                Manage All Loans
-                <ArrowRight className="w-3.5 h-3.5" />
+                View all &rarr;
               </Link>
             </div>
           </div>
         </div>
       </div>
 
-      {/* SMART SECTION: Show Getting Started Guide if No Activity, or Unified Analytics if Activity Exists */}
+      {/* QUICK START / HOW IT WORKS (If no activity) */}
       {!hasActivity ? (
         <div className="bg-white rounded-3xl border border-slate-200/90 p-6 sm:p-8 shadow-sm space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-blue-50 text-brand-primary text-xs font-bold uppercase tracking-wide mb-2">
                 <Sparkles className="w-3.5 h-3.5" />
-                Quick Start
+                How It Works
               </div>
               <h2 className="text-lg sm:text-xl font-bold text-slate-900">
-                Get Started with LendFlow in 3 Simple Steps
+                Manage Roommate & Friend Debts in 3 Easy Steps
               </h2>
               <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
-                Keep track of personal debts and loans without any complicated spreadsheets or awkward reminders.
+                Never lose track of shared expenses, food bills, or borrowed money again.
               </p>
             </div>
           </div>
@@ -415,15 +440,15 @@ export const HomePage = () => {
                 <Coins className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="font-bold text-slate-900 text-sm">1. Propose a Loan</h3>
+                <h3 className="font-bold text-slate-900 text-sm">1. Record an Expense</h3>
                 <p className="text-xs text-slate-500 mt-1 leading-relaxed">
-                  Lend money to a friend with clear due dates, return terms, and 0% or custom interest.
+                  Paid for food, rent, or petrol? Put your friend's username and amount. They get notified instantly.
                 </p>
               </div>
               <div className="pt-1">
                 <Link to="/loans/create">
                   <Button variant="primary" size="sm" className="text-xs">
-                    + Propose Loan
+                    + Add Record
                   </Button>
                 </Link>
               </div>
@@ -432,18 +457,18 @@ export const HomePage = () => {
             {/* Step 2 */}
             <div className="p-5 rounded-2xl bg-slate-50/80 border border-slate-100 hover:border-emerald-500/40 hover:bg-white transition-all space-y-3">
               <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold">
-                <Search className="w-5 h-5" />
+                <Users className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="font-bold text-slate-900 text-sm">2. Find Friends</h3>
+                <h3 className="font-bold text-slate-900 text-sm">2. Stay in Complete Sync</h3>
                 <p className="text-xs text-slate-500 mt-1 leading-relaxed">
-                  Search registered members by their username or name to quickly send or review loan requests.
+                  Both friends see the same exact balance on their accounts. Zero misunderstandings or forgotten debts.
                 </p>
               </div>
               <div className="pt-1">
                 <Link to="/users/search">
                   <Button variant="outline" size="sm" className="text-xs">
-                    Search Members
+                    Find Friends
                   </Button>
                 </Link>
               </div>
@@ -455,15 +480,15 @@ export const HomePage = () => {
                 <CreditCard className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="font-bold text-slate-900 text-sm">3. Record Repayments</h3>
+                <h3 className="font-bold text-slate-900 text-sm">3. Settle Up Easily</h3>
                 <p className="text-xs text-slate-500 mt-1 leading-relaxed">
-                  Record payments when installments are made. Both parties confirm for complete clarity.
+                  When cash or bank transfer is paid back, mark it settled. The balance updates to zero immediately.
                 </p>
               </div>
               <div className="pt-1">
                 <Link to="/repayments">
                   <Button variant="secondary" size="sm" className="text-xs">
-                    View Repayments
+                    Settle Up
                   </Button>
                 </Link>
               </div>
@@ -471,15 +496,14 @@ export const HomePage = () => {
           </div>
         </div>
       ) : hasChartData ? (
-        /* Unified, Streamlined Analytics Card */
+        /* Unified Analytics Card */
         <div className="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200/90 shadow-sm space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
             <div>
-              <h3 className="font-bold text-slate-900 text-base">Monthly Activity Overview</h3>
-              <p className="text-xs text-slate-500">6-Month lending, borrowing, and repayment flow</p>
+              <h3 className="font-bold text-slate-900 text-base">Monthly Shared Activity</h3>
+              <p className="text-xs text-slate-500">6-Month money given, taken, and settled</p>
             </div>
 
-            {/* Tab Switcher */}
             <div className="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl text-xs font-semibold">
               <button
                 type="button"
@@ -490,7 +514,7 @@ export const HomePage = () => {
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
-                Lent vs Borrowed
+                Given vs Taken
               </button>
               <button
                 type="button"
@@ -501,7 +525,7 @@ export const HomePage = () => {
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
-                Repayments Received
+                Settlements Made
               </button>
             </div>
           </div>
@@ -528,8 +552,8 @@ export const HomePage = () => {
                     formatter={(val) => [`$${Number(val).toFixed(2)}`]}
                   />
                   <Legend iconType="circle" wrapperStyle={{ fontSize: '11px', paddingTop: '10px' }} />
-                  <Area type="monotone" dataKey="lent" name="Lent ($)" stroke="#3157D5" strokeWidth={2} fillOpacity={1} fill="url(#colorLent)" />
-                  <Area type="monotone" dataKey="borrowed" name="Borrowed ($)" stroke="#16A36A" strokeWidth={2} fillOpacity={1} fill="url(#colorBorrowed)" />
+                  <Area type="monotone" dataKey="lent" name="Money Given ($)" stroke="#3157D5" strokeWidth={2} fillOpacity={1} fill="url(#colorLent)" />
+                  <Area type="monotone" dataKey="borrowed" name="Money Taken ($)" stroke="#16A36A" strokeWidth={2} fillOpacity={1} fill="url(#colorBorrowed)" />
                 </AreaChart>
               ) : (
                 <BarChart data={charts} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
@@ -538,9 +562,9 @@ export const HomePage = () => {
                   <YAxis tick={{ fontSize: 11, fill: '#64748b' }} axisLine={false} tickLine={false} />
                   <Tooltip
                     contentStyle={{ backgroundColor: '#17233C', color: '#fff', borderRadius: '12px', fontSize: '12px' }}
-                    formatter={(val) => [`$${Number(val).toFixed(2)}`, 'Repaid']}
+                    formatter={(val) => [`$${Number(val).toFixed(2)}`, 'Settled']}
                   />
-                  <Bar dataKey="repaid" name="Confirmed Repayments ($)" fill="#16A36A" radius={[6, 6, 0, 0]} />
+                  <Bar dataKey="repaid" name="Confirmed Settlements ($)" fill="#16A36A" radius={[6, 6, 0, 0]} />
                 </BarChart>
               )}
             </ResponsiveContainer>
@@ -548,14 +572,14 @@ export const HomePage = () => {
         </div>
       ) : null}
 
-      {/* Upcoming Due Dates & Recent Activity (Neat Responsive Layout) */}
+      {/* UPCOMING DUE DATES & RECENT ACTIVITY */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Upcoming Due Dates (1 col on desktop) */}
+        {/* Upcoming Return Dates (1 col) */}
         <div className="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200/90 shadow-sm space-y-4">
           <div className="flex items-center justify-between pb-3 border-b border-slate-100">
             <h3 className="font-bold text-slate-900 text-sm flex items-center gap-2">
               <Calendar className="w-4 h-4 text-brand-primary" />
-              Upcoming Payments Due
+              Agreed Return Dates
             </h3>
             <span className="text-xs text-slate-400 font-semibold">{upcomingLoans.length}</span>
           </div>
@@ -572,7 +596,7 @@ export const HomePage = () => {
                     {loan.currency} {(loan.remainingBalance / 100).toFixed(2)}
                   </p>
                   <p className="text-[11px] text-slate-400 mt-0.5">
-                    Due: {new Date(loan.dueDate).toLocaleDateString()}
+                    Return by: {new Date(loan.dueDate).toLocaleDateString()}
                   </p>
                 </div>
                 <Link to={`/loans/${loan._id}`}>
@@ -590,19 +614,19 @@ export const HomePage = () => {
                 </div>
                 <p className="text-xs font-semibold text-slate-700">All caught up!</p>
                 <p className="text-[11px] text-slate-400">
-                  No loan installments are due in the near future.
+                  No agreed return dates due in the near future.
                 </p>
               </div>
             )}
           </div>
         </div>
 
-        {/* Recent Activity (2 cols on desktop) */}
+        {/* Recent Activity (2 cols) */}
         <div className="lg:col-span-2 bg-white p-5 sm:p-6 rounded-3xl border border-slate-200/90 shadow-sm space-y-4">
           <div className="flex items-center justify-between pb-3 border-b border-slate-100">
             <h3 className="font-bold text-slate-900 text-sm flex items-center gap-2">
               <Clock className="w-4 h-4 text-brand-primary" />
-              Recent Transactions & Activity
+              Recent Debts & Settlements
             </h3>
             <Link to="/loans" className="text-xs font-bold text-brand-primary hover:underline">
               View all &rarr;
@@ -617,12 +641,12 @@ export const HomePage = () => {
               >
                 <div className="flex items-center gap-3 truncate">
                   <div className="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold shrink-0">
-                    <CreditCard className="w-4 h-4" />
+                    <Check className="w-4 h-4" />
                   </div>
                   <div className="truncate">
-                    <p className="font-bold text-slate-900 truncate">Payment: {r.loan?.description || 'Loan'}</p>
+                    <p className="font-bold text-slate-900 truncate">Settled: {r.loan?.description || 'Debt'}</p>
                     <p className="text-[11px] text-slate-500">
-                      From: {r.borrower?.fullName || 'Member'} &bull; {new Date(r.paymentDate).toLocaleDateString()}
+                      From: {r.borrower?.fullName || 'Friend'} &bull; {new Date(r.paymentDate).toLocaleDateString()}
                     </p>
                   </div>
                 </div>
@@ -630,7 +654,7 @@ export const HomePage = () => {
                   <p className="font-bold text-emerald-700">
                     {r.currency} {(r.amount / 100).toFixed(2)}
                   </p>
-                  <Badge status={r.status}>{r.status}</Badge>
+                  <Badge status={r.status}>{r.status === 'confirmed' ? 'Settled' : r.status}</Badge>
                 </div>
               </div>
             ))}
@@ -645,9 +669,9 @@ export const HomePage = () => {
                     <Coins className="w-4 h-4" />
                   </div>
                   <div className="truncate">
-                    <p className="font-bold text-slate-900 truncate">Loan: {l.description}</p>
+                    <p className="font-bold text-slate-900 truncate">{l.description}</p>
                     <p className="text-[11px] text-slate-500">
-                      Lender: {l.lender?.fullName || 'Member'} &bull; Borrower: {l.borrower?.fullName || 'Member'}
+                      Lent by: {l.lender?.fullName || 'Friend'} &bull; Owed by: {l.borrower?.fullName || 'Friend'}
                     </p>
                   </div>
                 </div>
@@ -664,7 +688,7 @@ export const HomePage = () => {
               <div className="text-center py-8 space-y-1.5">
                 <p className="text-xs font-semibold text-slate-700">No recent transactions</p>
                 <p className="text-[11px] text-slate-400">
-                  When you create a loan or make a payment, your activity will appear here.
+                  When you record a shared expense or payment, your history will appear here.
                 </p>
               </div>
             )}

@@ -105,7 +105,7 @@ export const Navbar = ({ onOpenSidebarMobile }) => {
                       }`
                     }
                   >
-                    Loans
+                    Debts & IOUs
                   </NavLink>
                   <NavLink
                     to="/repayments"
@@ -117,7 +117,7 @@ export const Navbar = ({ onOpenSidebarMobile }) => {
                       }`
                     }
                   >
-                    Repayments
+                    Settlements
                   </NavLink>
                   <NavLink
                     to="/users/search"
@@ -129,7 +129,7 @@ export const Navbar = ({ onOpenSidebarMobile }) => {
                       }`
                     }
                   >
-                    Search Members
+                    Find Friends
                   </NavLink>
                 </>
               )}

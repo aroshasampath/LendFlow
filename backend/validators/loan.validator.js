@@ -3,14 +3,16 @@
  */
 export const validateLoanCreation = ({
   borrowerIdentifier,
+  friendIdentifier,
   amount,
   currency,
   dueDate,
   repaymentFrequency,
   description,
 }) => {
-  if (!borrowerIdentifier || !borrowerIdentifier.trim()) {
-    return { isValid: false, error: 'Please specify the borrower for this loan request.' };
+  const target = friendIdentifier || borrowerIdentifier;
+  if (!target || !target.trim()) {
+    return { isValid: false, error: 'Please specify the friend or member for this record.' };
   }
 
   const numAmount = parseFloat(amount);
