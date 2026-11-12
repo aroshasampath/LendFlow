@@ -56,3 +56,4 @@ All automated security tests, penetration checks, dependency audits, and input v
 1. **HTTPS Enforcement**: Ensure the reverse proxy (Nginx, Cloudflare, or AWS ALB) enforces TLS 1.3 and redirects all HTTP traffic to HTTPS.
 2. **Environment Secret Management**: Store `JWT_ACCESS_SECRET`, `JWT_REFRESH_SECRET`, and MongoDB Atlas credentials in a cloud secret manager (e.g. AWS Secrets Manager, GCP Secret Manager, or Doppler) rather than plain `.env` files.
 3. **Database IP Access Lists**: Keep MongoDB Atlas Network Access restricted to the specific static IP addresses of the application server instances.
+
