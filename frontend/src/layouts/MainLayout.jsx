@@ -4,6 +4,11 @@ import { Sidebar } from '../components/Sidebar';
 import { Footer } from '../components/Footer';
 import { fetchSystemHealth } from '../services/api';
 
+/**
+ * Universal Full-Width MainLayout
+ * Ensures Header, Main Content, and Footer span the full page width
+ * with zero awkward margins or empty offsets.
+ */
 export const MainLayout = ({ children }) => {
   const [isLiveConnected, setIsLiveConnected] = useState(false);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
@@ -17,7 +22,7 @@ export const MainLayout = ({ children }) => {
         if (isMounted && response?.status === 'healthy') {
           setIsLiveConnected(true);
         }
-      } catch (err) {
+      } catch {
         if (isMounted) setIsLiveConnected(false);
       }
     };
@@ -31,8 +36,8 @@ export const MainLayout = ({ children }) => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-brand-bg flex">
-      {/* Sidebar Navigation */}
+    <div className="min-h-screen bg-brand-bg flex flex-col w-full overflow-x-hidden">
+      {/* Slide-out Sidebar Navigation Drawer */}
       <Sidebar
         isOpenMobile={isMobileSidebarOpen}
         onCloseMobile={() => setIsMobileSidebarOpen(false)}
@@ -40,23 +45,19 @@ export const MainLayout = ({ children }) => {
         onToggleCollapseDesktop={() => setIsCollapsedDesktop(!isCollapsedDesktop)}
       />
 
-      {/* Main Content Area */}
-      <div
-        className={`flex-1 flex flex-col min-w-0 transition-all duration-200 ${
-          isCollapsedDesktop ? 'lg:pl-20' : 'lg:pl-64'
-        }`}
-      >
-        <Navbar
-          isLiveConnected={isLiveConnected}
-          onOpenSidebarMobile={() => setIsMobileSidebarOpen(true)}
-        />
+      {/* Full-width Top Navigation Header (Edge-to-Edge) */}
+      <Navbar
+        isLiveConnected={isLiveConnected}
+        onOpenSidebarMobile={() => setIsMobileSidebarOpen(true)}
+      />
 
-        <main className="flex-1 w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-5 sm:py-8">
-          {children}
-        </main>
+      {/* Full-width Centered Main Content Area */}
+      <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10">
+        {children}
+      </main>
 
-        <Footer />
-      </div>
+      {/* Full-width Footer (Edge-to-Edge) */}
+      <Footer />
     </div>
   );
 };

@@ -168,4 +168,24 @@ export const Sidebar = ({
       </div>
     </div>
   );
+
+  return (
+    <>
+      {/* Responsive Slide-out Navigation Drawer */}
+      {isOpenMobile && (
+        <div className="fixed inset-0 z-50">
+          {/* Backdrop Blur Overlay */}
+          <div
+            className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity"
+            onClick={onCloseMobile}
+            aria-hidden="true"
+          />
+          {/* Drawer Body */}
+          <aside className="fixed inset-y-0 left-0 w-72 max-w-[85vw] z-50 shadow-2xl animate-in slide-in-from-left duration-200 border-r border-slate-800">
+            {sidebarContent}
+          </aside>
+        </div>
+      )}
+    </>
+  );
 };

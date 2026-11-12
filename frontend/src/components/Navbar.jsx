@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { 
   Landmark, 
   Menu, 
@@ -80,6 +80,74 @@ export const Navbar = ({ isLiveConnected, onOpenSidebarMobile }) => {
                 Lend<span className="text-brand-primary">Flow</span>
               </span>
             </Link>
+
+            {/* Desktop Navigation Links */}
+            <nav className="hidden lg:flex items-center gap-1 ml-4 border-l border-slate-200 pl-4">
+              <NavLink
+                to="/"
+                className={({ isActive }) =>
+                  `px-3 py-1.5 rounded-xl text-xs font-semibold transition-all ${
+                    isActive
+                      ? 'bg-brand-primaryLight text-brand-primary font-bold'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                  }`
+                }
+              >
+                Dashboard
+              </NavLink>
+              {isAuthenticated && (
+                <>
+                  <NavLink
+                    to="/loans"
+                    className={({ isActive }) =>
+                      `px-3 py-1.5 rounded-xl text-xs font-semibold transition-all ${
+                        isActive
+                          ? 'bg-brand-primaryLight text-brand-primary font-bold'
+                          : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                      }`
+                    }
+                  >
+                    Loans
+                  </NavLink>
+                  <NavLink
+                    to="/repayments"
+                    className={({ isActive }) =>
+                      `px-3 py-1.5 rounded-xl text-xs font-semibold transition-all ${
+                        isActive
+                          ? 'bg-brand-primaryLight text-brand-primary font-bold'
+                          : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                      }`
+                    }
+                  >
+                    Repayments
+                  </NavLink>
+                  <NavLink
+                    to="/users/search"
+                    className={({ isActive }) =>
+                      `px-3 py-1.5 rounded-xl text-xs font-semibold transition-all ${
+                        isActive
+                          ? 'bg-brand-primaryLight text-brand-primary font-bold'
+                          : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                      }`
+                    }
+                  >
+                    Search Members
+                  </NavLink>
+                </>
+              )}
+              <NavLink
+                to="/responsive-qa"
+                className={({ isActive }) =>
+                  `px-3 py-1.5 rounded-xl text-xs font-semibold transition-all ${
+                    isActive
+                      ? 'bg-brand-primaryLight text-brand-primary font-bold'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                  }`
+                }
+              >
+                Responsive QA
+              </NavLink>
+            </nav>
           </div>
 
           {/* Center / Right: Viewport Pill, Status, & Auth */}
