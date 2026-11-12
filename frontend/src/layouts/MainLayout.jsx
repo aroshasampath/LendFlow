@@ -37,3 +37,4 @@ export const MainLayout = ({ children }) => {
     </div>
   );
 };
+

@@ -110,3 +110,4 @@ export const Navbar = ({ isLiveConnected }) => {
     </header>
   );
 };
+

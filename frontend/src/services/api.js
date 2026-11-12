@@ -49,3 +49,4 @@ api.interceptors.response.use(
 export const fetchSystemHealth = async () => {
   return await api.get('/health');
 };
+
