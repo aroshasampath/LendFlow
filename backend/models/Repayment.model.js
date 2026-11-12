@@ -93,3 +93,4 @@ repaymentSchema.index({ borrower: 1, status: 1 });
 repaymentSchema.index({ lender: 1, status: 1 });
 
 export const Repayment = mongoose.model('Repayment', repaymentSchema);
+

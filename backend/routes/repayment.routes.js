@@ -20,3 +20,4 @@ router.get('/loan/:loanId', getLoanRepayments);
 router.get('/', getMyRepayments);
 
 export default router;
+
